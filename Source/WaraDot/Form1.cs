@@ -63,7 +63,7 @@ namespace WaraDot
         bool editing;
         #endregion
 
-        #region ペン色
+        #region ペン色、ツールボックス
         public Color Color
         {
             get
@@ -76,6 +76,12 @@ namespace WaraDot
                 TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
                 topControl1.SyncColor(value);
             }
+        }
+
+        public Tools GetTools()
+        {
+            TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+            return topControl1.tools;
         }
         #endregion
 
@@ -177,5 +183,36 @@ namespace WaraDot
                 pressingCtrl = false;
             }
         }
+
+        #region 描画
+        public Point ToImage(int mouseX, int mouseY)
+        {
+            return centerControl1.ToImage(mouseX, mouseY, this);
+        }
+
+        ///// <summary>
+        ///// 点を打ちます
+        ///// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
+        ///// </summary>
+        ///// <param name="mouseX"></param>
+        ///// <param name="mouseY"></param>
+        ///// <param name="form1"></param>
+        //public void DrawDotByMouse(int mouseX, int mouseY, ref bool drawed)
+        //{
+        //    centerControl1.DrawDotByMouse(mouseX, mouseY, this, ref drawed);
+        //}
+        /// <summary>
+        /// 点を打ちます
+        /// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
+        /// </summary>
+        /// <param name="mouseX"></param>
+        /// <param name="mouseY"></param>
+        /// <param name="form1"></param>
+        public void DrawDotByImage(int imgX, int imgY, ref bool drawed)
+        {
+            centerControl1.DrawDotByImage(imgX, imgY, this, ref drawed);
+        }
+        #endregion
+
     }
 }

@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buckets.cs" />
     <Compile Include="CenterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -80,6 +81,7 @@
       <DependentUpon>CenterControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

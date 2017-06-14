@@ -83,10 +83,10 @@ namespace WaraDot
         /// 使いまわす変数
         /// </summary>
         Point workImageLocation;
-        Point ToImage(int x, int y, Form1 form1)
+        public Point ToImage(int mouseX, int mouseY, Form1 form1)
         {
-            workImageLocation.X = (int)((x - target.X) / form1.config.scale);
-            workImageLocation.Y = (int)((y - target.Y) / form1.config.scale);
+            workImageLocation.X = (int)((mouseX - target.X) / form1.config.scale);
+            workImageLocation.Y = (int)((mouseY - target.Y) / form1.config.scale);
             return workImageLocation;
         }
 
@@ -101,9 +101,13 @@ namespace WaraDot
             return workWindowLocation;
         }
 
-        bool InImage(Point pt, Bitmap bitmap)
+        bool InImage(Point imgPt, Bitmap bitmap)
         {
-            return -1 < pt.X && pt.X < bitmap.Width && -1 < pt.Y && pt.Y < bitmap.Height;
+            return InImage(imgPt.X, imgPt.Y, bitmap);
+        }
+        bool InImage(int x, int y, Bitmap bitmap)
+        {
+            return -1 < x && x < bitmap.Width && -1 < y && y < bitmap.Height;
         }
 
         private void CenterControl_MouseWheel(object sender, MouseEventArgs e)
@@ -151,14 +155,14 @@ namespace WaraDot
         /// <param name="mouseX"></param>
         /// <param name="mouseY"></param>
         /// <param name="form1"></param>
-        void DrawDot(int mouseX, int mouseY, Form1 form1, ref bool drawed)
+        public void DrawDotByMouse(int mouseX, int mouseY, Form1 form1, ref bool drawed)
         {
             #region 色塗り
             // いったん画像の座標に変える
-            Point pt = ToImage(mouseX, mouseY, form1);
+            Point imgPt = ToImage(mouseX, mouseY, form1);
 
             // 画像のサイズ内を指しているかチェック
-            if (InImage(pt, form1.bitmap))
+            if (InImage(imgPt, form1.bitmap))
             {
                 // ランダム色打ち
                 //int r = Form1.rand.Next(256);
@@ -167,7 +171,7 @@ namespace WaraDot
                 //form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
 
                 // 指定色打ち
-                form1.bitmap.SetPixel(pt.X, pt.Y, form1.Color);
+                form1.bitmap.SetPixel(imgPt.X, imgPt.Y, form1.Color);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
@@ -175,6 +179,27 @@ namespace WaraDot
                 drawed = true;
             }
             #endregion
+        }
+        /// <summary>
+        /// 点を打ちます
+        /// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
+        /// </summary>
+        /// <param name="mouseX"></param>
+        /// <param name="mouseY"></param>
+        /// <param name="form1"></param>
+        public void DrawDotByImage(int imgX, int imgY, Form1 form1, ref bool drawed)
+        {
+            // 画像のサイズ内を指しているかチェック
+            if (InImage(imgX, imgY, form1.bitmap))
+            {
+                // 指定色打ち
+                form1.bitmap.SetPixel(imgX, imgY, form1.Color);
+
+                #region 保存フラグ
+                ((Form1)ParentForm).Editing = true;
+                #endregion
+                drawed = true;
+            }
         }
 
         /// <summary>
@@ -188,15 +213,15 @@ namespace WaraDot
         {
             #region 色塗り
             // いったん画像の座標に変える
-            Point pt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
-            Point pt2 = ToImage(mouseX, mouseY, form1);
+            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
+            Point imgPt2 = ToImage(mouseX, mouseY, form1);
 
             // 画像のサイズ内を指しているかチェック
             //if (InImage(pt2, form1.bitmap))
             {
                 Graphics g = Graphics.FromImage(form1.bitmap);
                 Pen pen = new Pen(form1.Color);
-                g.DrawLine(pen, pt1, pt2);
+                g.DrawLine(pen, imgPt1, imgPt2);
                 g.Dispose();
 
                 #region 保存フラグ
@@ -302,10 +327,23 @@ namespace WaraDot
                 {
                     form1.pressingMouseLeft = true;
 
-                    // マウスの左ボタンを押下した直後も描画したい
-                    bool drawed = false;
-                    DrawDot(e.X, e.Y, form1, ref drawed);
-                    if (drawed) { RefreshCanvas(); }
+                    switch (form1.GetTools())
+                    {
+                        case Tools.FreeHandLine:
+                            {
+                                // マウスの左ボタンを押下した直後も描画したい
+                                bool drawed = false;
+                                DrawDotByMouse(e.X, e.Y, form1, ref drawed);
+                                if (drawed) { RefreshCanvas(); }
+                            }
+                            break;
+                        case Tools.Buckets:
+                            {
+                                // 塗りつぶしたい
+                                Buckets.FillStart(e.X, e.Y, form1);
+                            }
+                            break;
+                    }
                 }
                 else if (MouseButtons.Right == e.Button)
                 {
@@ -326,7 +364,7 @@ namespace WaraDot
 
                     // マウスの左ボタンを放した直後にも描画したい。
                     bool drawed = false;
-                    DrawDot(e.X, e.Y, form1, ref drawed);
+                    DrawDotByMouse(e.X, e.Y, form1, ref drawed);
                     if (drawed) { RefreshCanvas(); }
                 }
             }

@@ -9,7 +9,22 @@ namespace WaraDot
         public TopControl()
         {
             InitializeComponent();
+
+            toolComboBox.SelectedIndex = 0;
         }
+
+        #region ツールボックス
+        private void toolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (toolComboBox.SelectedIndex)
+            {
+                case 1: tools = Tools.Buckets; break;
+                default://thru
+                case 0: tools = Tools.FreeHandLine; break;
+            }
+        }
+        public Tools tools;
+        #endregion
 
         #region 保存フラグ
         public void SyncEditing(bool value)
@@ -125,6 +140,15 @@ namespace WaraDot
             }
 
             ((Form1)ParentForm).RefreshCanvas();
+        }
+
+        private void colorButton_Click(object sender, EventArgs e)
+        {
+            // ランダム色打ち
+            int r = Form1.rand.Next(256);
+            int g = Form1.rand.Next(256);
+            int b = Form1.rand.Next(256);
+            SyncColor(Color.FromArgb(r, g, b));
         }
     }
 }
