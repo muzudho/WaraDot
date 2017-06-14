@@ -132,6 +132,10 @@ namespace WaraDot
         /// [Ctrl]キーを押しているなら真
         /// </summary>
         public bool pressingCtrl;
+        /// <summary>
+        /// マウスの左ボタンを押しているなら真
+        /// </summary>
+        public bool pressingMouseLeft;
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {

@@ -40,6 +40,7 @@
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.CenterControl_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseUp);
             this.ResumeLayout(false);
 
         }

@@ -17,6 +17,9 @@ namespace WaraDot
         public CenterControl()
         {
             InitializeComponent();
+
+            // マウス・ホイールイベントの追加
+            MouseWheel += new MouseEventHandler(this.CenterControl_MouseWheel);
         }
 
         public void OnReloadConfig()
@@ -103,28 +106,102 @@ namespace WaraDot
             return -1 < pt.X && pt.X < bitmap.Width && -1 < pt.Y && pt.Y < bitmap.Height;
         }
 
+        private void CenterControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
+            {
+                // 上に転がせば 3、下に転がせば -3 ぐらい。
+                float volume = e.Delta * SystemInformation.MouseWheelScrollLines / 120;
+
+                if (0 < volume)
+                {
+                    form1.config.scale += 1;
+                }
+                else
+                {
+                    form1.config.scale -= 1;
+                }
+
+                target.Width = (float)(form1.config.scale * form1.config.width);
+                target.Height = (float)(form1.config.scale * form1.config.height);
+
+                pointerRect.Width = (int)(form1.config.scale + pointerPenWidth / 2);
+                pointerRect.Height = (int)(form1.config.scale + pointerPenWidth / 2);
+
+                // いったん画像の座標に変える
+                Point pt = ToImage(e.X, e.Y, form1);
+                // 画像のサイズ内を指しているかチェック
+                if (InImage(pt, form1.bitmap))
+                {
+                    // 画面の座標に戻す
+                    pt = ToWindow(pt.X, pt.Y, form1);
+
+                    pointerRect.X = pt.X;
+                    pointerRect.Y = pt.Y;
+                }
+
+                RefreshCanvas();
+            }
+        }
+
         private void CenterControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
             {
                 bool refresh = false;
+                bool pixelMove = false;
 
                 #region ポインター
-                // いったん画像の座標に変える
-                Point pt = ToImage(e.X, e.Y, form1);
-
-                // 画像のサイズ内を指しているかチェック
-                if (InImage( pt, form1.bitmap))
                 {
-                    // 画面の座標に戻す
-                    pt = ToWindow(pt.X, pt.Y, form1);
+                    // いったん画像の座標に変える
+                    Point pt = ToImage(e.X, e.Y, form1);
 
-                    if (pt.X != pointerRect.X || pt.Y != pointerRect.Y)
+                    // 画像のサイズ内を指しているかチェック
+                    if (InImage(pt, form1.bitmap))
                     {
-                        // リペイント回数が多いとちらつくので、枠を再描画する必要のあるときだけリペイントする
-                        pointerRect.X = pt.X;
-                        pointerRect.Y = pt.Y;
-                        refresh = true;
+                        // 画面の座標に戻す
+                        pt = ToWindow(pt.X, pt.Y, form1);
+
+                        if (pt.X != pointerRect.X || pt.Y != pointerRect.Y)
+                        {
+                            // リペイント回数が多いとちらつくので、枠を再描画する必要のあるときだけリペイントする
+                            pointerRect.X = pt.X;
+                            pointerRect.Y = pt.Y;
+                            refresh = true;
+                            pixelMove = true;
+                        }
+                    }
+                }
+                #endregion
+
+                #region 描画
+                if (form1.pressingMouseLeft && pixelMove)
+                {
+                    if (form1.pressingCtrl)
+                    {
+                        // キャンバスずらし中かもしれない
+                    }
+                    else
+                    {
+                        #region 色塗り
+                        // いったん画像の座標に変える
+                        Point pt = ToImage(e.X, e.Y, form1);
+
+                        // 画像のサイズ内を指しているかチェック
+                        if (InImage(pt, form1.bitmap))
+                        {
+                            int r = Form1.rand.Next(256);
+                            int g = Form1.rand.Next(256);
+                            int b = Form1.rand.Next(256);
+
+                            form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
+                            #region 保存フラグ
+                            ((Form1)ParentForm).Editing = true;
+                            #endregion
+
+                            RefreshCanvas();
+                        }
+                        #endregion
                     }
                 }
                 #endregion
@@ -174,35 +251,22 @@ namespace WaraDot
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
             {
-                if (form1.pressingCtrl)
+                if (MouseButtons.Left == e.Button)
                 {
-                    // キャンバスずらし中かもしれない
+                    form1.pressingMouseLeft = true;
                 }
-                else
-                {
-                    #region 色塗り
-                    // いったん画像の座標に変える
-                    Point pt = ToImage(e.X, e.Y, form1);
-
-                    // 画像のサイズ内を指しているかチェック
-                    if (InImage(pt, form1.bitmap))
-                    {
-                        int r = Form1.rand.Next(256);
-                        int g = Form1.rand.Next(256);
-                        int b = Form1.rand.Next(256);
-
-                        form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
-                        #region 保存フラグ
-                        ((Form1)ParentForm).Editing = true;
-                        #endregion
-
-                        RefreshCanvas();
-                    }
-                    #endregion
-                }
-
             }
         }
 
+        private void CenterControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
+            {
+                if (MouseButtons.Left == e.Button)
+                {
+                    form1.pressingMouseLeft = false;
+                }
+            }
+        }
     }
 }
