@@ -128,6 +128,11 @@ namespace WaraDot
 
         }
 
+        /// <summary>
+        /// [Ctrl]キーを押しているなら真
+        /// </summary>
+        public bool pressingCtrl;
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if ((e.Modifiers & Keys.Control) == Keys.Control)
@@ -140,6 +145,16 @@ namespace WaraDot
                     // ビープ音を鳴らないようにする
                     e.SuppressKeyPress = true;
                 }
+
+                pressingCtrl = true;
+            }
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey)
+            {
+                pressingCtrl = false;
             }
         }
     }

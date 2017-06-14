@@ -43,12 +43,18 @@ namespace WaraDot
             }
 
             workImageLocation = new Point();
+            previousMouse = new Point();
         }
 
         public void RefreshCanvas()
         {
             Refresh();
         }
+
+        /// <summary>
+        /// 前のマウスカーソル位置
+        /// </summary>
+        Point previousMouse;
 
         /// <summary>
         /// ペンが指しているピクセル
@@ -76,8 +82,8 @@ namespace WaraDot
         Point workImageLocation;
         Point ToImage(int x, int y, Form1 form1)
         {
-            workImageLocation.X = (int)((x - form1.config.ox) / form1.config.scale);
-            workImageLocation.Y = (int)((y - form1.config.oy) / form1.config.scale);
+            workImageLocation.X = (int)((x - target.X) / form1.config.scale);
+            workImageLocation.Y = (int)((y - target.Y) / form1.config.scale);
             return workImageLocation;
         }
 
@@ -87,8 +93,8 @@ namespace WaraDot
         Point workWindowLocation;
         Point ToWindow(int x, int y, Form1 form1)
         {
-            workWindowLocation.X = (int)(x * form1.config.scale + form1.config.ox);
-            workWindowLocation.Y = (int)(y * form1.config.scale + form1.config.oy);
+            workWindowLocation.X = (int)(x * form1.config.scale + target.X);
+            workWindowLocation.Y = (int)(y * form1.config.scale + target.Y);
             return workWindowLocation;
         }
 
@@ -101,6 +107,9 @@ namespace WaraDot
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
             {
+                bool refresh = false;
+
+                #region ポインター
                 // いったん画像の座標に変える
                 Point pt = ToImage(e.X, e.Y, form1);
 
@@ -115,8 +124,28 @@ namespace WaraDot
                         // リペイント回数が多いとちらつくので、枠を再描画する必要のあるときだけリペイントする
                         pointerRect.X = pt.X;
                         pointerRect.Y = pt.Y;
-                        RefreshCanvas();
+                        refresh = true;
                     }
+                }
+                #endregion
+
+                #region キャンバスずらし
+                if (form1.pressingCtrl)
+                {
+                    // 差
+                    int dx = e.X - previousMouse.X;
+                    int dy = e.Y - previousMouse.Y;
+
+                    target.Offset(dx, dy);
+                    refresh = true;
+                }
+                previousMouse.X = e.X;
+                previousMouse.Y = e.Y;
+                #endregion
+
+                if (refresh)
+                {
+                    RefreshCanvas();
                 }
             }
         }
@@ -145,25 +174,35 @@ namespace WaraDot
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
             {
-                // いったん画像の座標に変える
-                Point pt = ToImage(e.X, e.Y, form1);
-
-                // 画像のサイズ内を指しているかチェック
-                if (InImage(pt, form1.bitmap))
+                if (form1.pressingCtrl)
                 {
-                    int r = Form1.rand.Next(256);
-                    int g = Form1.rand.Next(256);
-                    int b = Form1.rand.Next(256);
+                    // キャンバスずらし中かもしれない
+                }
+                else
+                {
+                    #region 色塗り
+                    // いったん画像の座標に変える
+                    Point pt = ToImage(e.X, e.Y, form1);
 
-                    form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
-                    #region 保存フラグ
-                    ((Form1)ParentForm).Editing = true;
+                    // 画像のサイズ内を指しているかチェック
+                    if (InImage(pt, form1.bitmap))
+                    {
+                        int r = Form1.rand.Next(256);
+                        int g = Form1.rand.Next(256);
+                        int b = Form1.rand.Next(256);
+
+                        form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
+                        #region 保存フラグ
+                        ((Form1)ParentForm).Editing = true;
+                        #endregion
+
+                        RefreshCanvas();
+                    }
                     #endregion
-
-                    RefreshCanvas();
                 }
 
             }
         }
+
     }
 }
