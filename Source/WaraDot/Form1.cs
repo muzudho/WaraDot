@@ -8,6 +8,16 @@ namespace WaraDot
 {
     public partial class Form1 : Form
     {
+        static Form1()
+        {
+            rand = new Random(Environment.TickCount);
+        }
+
+        /// <summary>
+        /// 乱数
+        /// </summary>
+        public static Random rand;
+
         /// <summary>
         /// 出力画像ファイル名
         /// </summary>

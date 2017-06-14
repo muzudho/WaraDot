@@ -31,16 +31,15 @@ namespace WaraDot
         {
             Bitmap img = ((Form1)ParentForm).bitmap;
             int r, g, b;
-            Random rand = new Random(Environment.TickCount);
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
             for (int y = 0; y < img.Height; y++)
             {
                 for (int x = 0; x < img.Width; x++)
                 {
-                    r = rand.Next(256);
-                    g = rand.Next(256);
-                    b = rand.Next(256);
+                    r = Form1.rand.Next(256);
+                    g = Form1.rand.Next(256);
+                    b = Form1.rand.Next(256);
                     img.SetPixel(x, y, Color.FromArgb(r,g,b));
                 }
             }

@@ -38,6 +38,7 @@
             this.Name = "CenterControl";
             this.Load += new System.EventHandler(this.CenterControl_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.CenterControl_Paint);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseMove);
             this.ResumeLayout(false);
 

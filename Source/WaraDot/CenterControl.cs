@@ -41,6 +41,8 @@ namespace WaraDot
                 pointerPen = new Pen(Color.Black, pointerPenWidth);
                 target = new RectangleF(100, 100, 100, 100);
             }
+
+            workImageLocation = new Point();
         }
 
         public void RefreshCanvas()
@@ -68,19 +70,53 @@ namespace WaraDot
             }
         }
 
+        /// <summary>
+        /// 使いまわす変数
+        /// </summary>
+        Point workImageLocation;
+        Point ToImage(int x, int y, Form1 form1)
+        {
+            workImageLocation.X = (int)((x - form1.config.ox) / form1.config.scale);
+            workImageLocation.Y = (int)((y - form1.config.oy) / form1.config.scale);
+            return workImageLocation;
+        }
+
+        /// <summary>
+        /// 使いまわす変数
+        /// </summary>
+        Point workWindowLocation;
+        Point ToWindow(int x, int y, Form1 form1)
+        {
+            workWindowLocation.X = (int)(x * form1.config.scale + form1.config.ox);
+            workWindowLocation.Y = (int)(y * form1.config.scale + form1.config.oy);
+            return workWindowLocation;
+        }
+
+        bool InImage(Point pt, Bitmap bitmap)
+        {
+            return -1 < pt.X && pt.X < bitmap.Width && -1 < pt.Y && pt.Y < bitmap.Height;
+        }
+
         private void CenterControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
             {
-                int pointerCellX = (int)((int)((e.X - form1.config.ox) / form1.config.scale) * form1.config.scale + form1.config.ox);
-                int pointerCellY = (int)((int)((e.Y - form1.config.oy) / form1.config.scale) * form1.config.scale + form1.config.oy);
+                // いったん画像の座標に変える
+                Point pt = ToImage(e.X, e.Y, form1);
 
-                if (pointerCellX != pointerRect.X || pointerCellY != pointerRect.Y)
+                // 画像のサイズ内を指しているかチェック
+                if (InImage( pt, form1.bitmap))
                 {
-                    // リペイント回数が多いとちらつくので、枠を再描画する必要のあるときだけリペイントする
-                    pointerRect.X = (int)(pointerCellX);
-                    pointerRect.Y = (int)(pointerCellY);
-                    RefreshCanvas();
+                    // 画面の座標に戻す
+                    pt = ToWindow(pt.X, pt.Y, form1);
+
+                    if (pt.X != pointerRect.X || pt.Y != pointerRect.Y)
+                    {
+                        // リペイント回数が多いとちらつくので、枠を再描画する必要のあるときだけリペイントする
+                        pointerRect.X = pt.X;
+                        pointerRect.Y = pt.Y;
+                        RefreshCanvas();
+                    }
                 }
             }
         }
@@ -102,6 +138,27 @@ namespace WaraDot
 
                 // 指しているピクセルを枠で囲む。等倍のとき邪魔だが……☆（＾～＾）
                 g.DrawRectangle(pointerPen, pointerRect);
+            }
+        }
+
+        private void CenterControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
+            {
+                // いったん画像の座標に変える
+                Point pt = ToImage(e.X, e.Y, form1);
+
+                // 画像のサイズ内を指しているかチェック
+                if (InImage(pt, form1.bitmap))
+                {
+                    int r = Form1.rand.Next(256);
+                    int g = Form1.rand.Next(256);
+                    int b = Form1.rand.Next(256);
+
+                    form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
+                    RefreshCanvas();
+                }
+
             }
         }
     }
