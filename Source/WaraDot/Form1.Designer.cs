@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.centerControl1 = new WaraDot.CenterControl();
             this.topPanel = new System.Windows.Forms.Panel();
             this.topControl1 = new WaraDot.TopControl();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.topPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,6 +64,10 @@
             this.topControl1.Size = new System.Drawing.Size(591, 38);
             this.topControl1.TabIndex = 0;
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -85,6 +91,7 @@
         private System.Windows.Forms.Panel topPanel;
         private TopControl topControl1;
         private CenterControl centerControl1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

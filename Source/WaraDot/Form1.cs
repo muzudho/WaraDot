@@ -42,6 +42,27 @@ namespace WaraDot
         /// </summary>
         public Config config;
 
+        #region 操作している者
+        /// <summary>
+        /// 操作している者
+        /// </summary>
+        public OperatorType OperatorType
+        {
+            get
+            {
+                return operatorType;
+            }
+            set
+            {
+                operatorType = value;
+
+                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                topControl1.SyncOperatorType(value);
+            }
+        }
+        OperatorType operatorType;
+        #endregion
+
         #region 保存フラグ
         /// <summary>
         /// 編集した内容を、まだ保存していないなら真
@@ -148,6 +169,10 @@ namespace WaraDot
             topControl1.SyncEditing(Editing);
             #endregion
 
+            OperatorType = OperatorType.Human;
+
+            // タイマーの実行
+            timer1.Start();
         }
 
         /// <summary>
@@ -190,17 +215,6 @@ namespace WaraDot
             return centerControl1.ToImage(mouseX, mouseY, this);
         }
 
-        ///// <summary>
-        ///// 点を打ちます
-        ///// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
-        ///// </summary>
-        ///// <param name="mouseX"></param>
-        ///// <param name="mouseY"></param>
-        ///// <param name="form1"></param>
-        //public void DrawDotByMouse(int mouseX, int mouseY, ref bool drawed)
-        //{
-        //    centerControl1.DrawDotByMouse(mouseX, mouseY, this, ref drawed);
-        //}
         /// <summary>
         /// 点を打ちます
         /// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
@@ -214,5 +228,25 @@ namespace WaraDot
         }
         #endregion
 
+        #region コンピューターの自動実行
+        public Buckets buckets;
+
+        private void Timer1_Tick(object sender, EventArgs e)
+        {
+            if (null!= buckets)
+            {
+                if (buckets.IsFinished())
+                {
+                    buckets = null;
+                    OperatorType = OperatorType.Human;
+                }
+                else
+                {
+                    buckets.Step();
+                    RefreshCanvas();
+                }
+            }
+        }
+        #endregion
     }
 }

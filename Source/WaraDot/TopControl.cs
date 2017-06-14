@@ -26,6 +26,28 @@ namespace WaraDot
         public Tools tools;
         #endregion
 
+        #region 操作している者
+        public void SyncOperatorType(OperatorType value)
+        {
+            switch (value)
+            {
+                case OperatorType.Computer:
+                    {
+                        operatorTypeLabel.Text = "COM";
+                        operatorTypeLabel.BackColor = Color.Red;
+                    }
+                    break;
+                default:
+                case OperatorType.Human:
+                    {
+                        operatorTypeLabel.Text = "人間";
+                        operatorTypeLabel.BackColor = SystemColors.Control;
+                    }
+                    break;
+            }
+        }
+        #endregion
+
         #region 保存フラグ
         public void SyncEditing(bool value)
         {

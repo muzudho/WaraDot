@@ -8,31 +8,73 @@ using System.Windows.Forms;
 
 namespace WaraDot
 {
+    /// <summary>
+    /// 1万ピクセルなら一瞬で塗りつぶせるが、
+    /// 150x150=22500 ピクセルになるとスタックオーバーフローしてしまう。
+    /// 
+    /// 塗りつぶしアルゴリズムを視覚化できないだろうか？
+    /// 
+    /// </summary>
     public class Buckets
     {
-        static Form1 form1_cache;
-        static Color color_cache;
+        Form1 form1_cache;
+        Color color_cache;
+        bool[,] markboard_cache;
+        List<Point> currentPoints;
+        List<Point> nextPoints;
+        const int countMax = 100;//10000;
 
-        static bool[,] markboard_cache;
-
-        public static void FillStart(int mouseX, int mouseY, Form1 form1)
+        public static Buckets Build(int mouseX, int mouseY, Form1 form1)
         {
-            //MessageBox.Show("塗りつぶしたい");
+            Buckets obj = new Buckets( mouseX, mouseY, form1);
+            return obj;
+        }
 
+        Buckets(int mouseX, int mouseY, Form1 form1)
+        {
             form1_cache = form1;
+
             markboard_cache = new bool[form1_cache.config.width, form1_cache.config.height];
 
+            // スタート地点
             Point imgPt = form1.ToImage(mouseX, mouseY);
             // マウス押下した地点の色
             color_cache = form1.bitmap.GetPixel(imgPt.X, imgPt.Y);
 
-            int count = 0;
-            PaintLoop(imgPt.X, imgPt.Y, ref count);
+            currentPoints = new List<Point>();
+            nextPoints = new List<Point>();
+            nextPoints.Add(imgPt);
         }
 
-        const int countMax = 10000;
-        static void PaintLoop(int imgX, int imgY, ref int count)
+        public bool IsFinished()
         {
+            return nextPoints.Count < 1;
+        }
+
+        public void Step()
+        {
+            if (IsFinished())
+            {
+                return;
+            }
+
+            if (0 < nextPoints.Count)
+            {
+                currentPoints.Clear();
+                currentPoints.AddRange(nextPoints);
+                nextPoints.Clear();
+                for (int i = 0; i< currentPoints.Count; i++)
+                {
+                    DrawAndSearch(currentPoints[i].X, currentPoints[i].Y);
+                }
+            }
+        }
+
+        void DrawAndSearch(int imgX, int imgY)
+        {
+            // 指定の升はとりあえずマークする
+            markboard_cache[imgX, imgY] = true;
+
             // 指定した地点の色
             Color color2 = form1_cache.bitmap.GetPixel(imgX, imgY);
 
@@ -41,44 +83,43 @@ namespace WaraDot
                 // 指定の地点をまず描画
                 bool drawed = false;
                 form1_cache.DrawDotByImage(imgX, imgY, ref drawed);
-                markboard_cache[imgX, imgY] = true;
-                count++;
 
                 if (drawed)
                 {
+                    //bool worked_unUse = false;
                     //*
                     // 上
                     imgY--;
-                    if (-1< imgY && !markboard_cache[imgX, imgY] && count < countMax)
+                    if (-1< imgY && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
-                        PaintLoop(imgX, imgY, ref count);
+                        nextPoints.Add( new Point(imgX, imgY));
                     }
                     imgY++;
                     //*/
                     //*
                     // 右
                     imgX++;
-                    if (imgX  < form1_cache.config.width && !markboard_cache[imgX, imgY] && count < countMax)
+                    if (imgX  < form1_cache.config.width && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
-                        PaintLoop(imgX, imgY, ref count);
+                        nextPoints.Add(new Point(imgX, imgY));
                     }
                     imgX--;
                     //*/
                     //*
                     // 下
                     imgY++;
-                    if (imgY  < form1_cache.config.height && !markboard_cache[imgX, imgY] && count < countMax)
+                    if (imgY  < form1_cache.config.height && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
-                        PaintLoop(imgX, imgY, ref count);
+                        nextPoints.Add(new Point(imgX, imgY));
                     }
                     imgY--;
                     //*/
                     //*
                     // 左
                     imgX--;
-                    if (-1 < imgX && !markboard_cache[imgX, imgY] && count < countMax)
+                    if (-1 < imgX && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
-                        PaintLoop(imgX, imgY, ref count);
+                        nextPoints.Add(new Point(imgX, imgY));
                     }
                     imgX++;
                     //*/

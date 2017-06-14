@@ -36,6 +36,7 @@
             this.reloadConfigButton = new System.Windows.Forms.Button();
             this.noiseButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
+            this.operatorTypeLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,6 +56,7 @@
             this.flowLayoutPanel1.Controls.Add(this.toolComboBox);
             this.flowLayoutPanel1.Controls.Add(this.colorButton);
             this.flowLayoutPanel1.Controls.Add(this.colorTextBox);
+            this.flowLayoutPanel1.Controls.Add(this.operatorTypeLabel);
             this.flowLayoutPanel1.Controls.Add(this.reloadConfigButton);
             this.flowLayoutPanel1.Controls.Add(this.noiseButton);
             this.flowLayoutPanel1.Controls.Add(this.clearButton);
@@ -95,7 +97,7 @@
             // 
             // reloadConfigButton
             // 
-            this.reloadConfigButton.Location = new System.Drawing.Point(305, 3);
+            this.reloadConfigButton.Location = new System.Drawing.Point(340, 3);
             this.reloadConfigButton.Name = "reloadConfigButton";
             this.reloadConfigButton.Size = new System.Drawing.Size(75, 23);
             this.reloadConfigButton.TabIndex = 2;
@@ -105,7 +107,7 @@
             // 
             // noiseButton
             // 
-            this.noiseButton.Location = new System.Drawing.Point(386, 3);
+            this.noiseButton.Location = new System.Drawing.Point(421, 3);
             this.noiseButton.Name = "noiseButton";
             this.noiseButton.Size = new System.Drawing.Size(75, 23);
             this.noiseButton.TabIndex = 1;
@@ -115,13 +117,22 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(467, 3);
+            this.clearButton.Location = new System.Drawing.Point(502, 3);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(44, 23);
             this.clearButton.TabIndex = 5;
             this.clearButton.Text = "白紙";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
+            // operatorTypeLabel
+            // 
+            this.operatorTypeLabel.AutoSize = true;
+            this.operatorTypeLabel.Location = new System.Drawing.Point(305, 0);
+            this.operatorTypeLabel.Name = "operatorTypeLabel";
+            this.operatorTypeLabel.Size = new System.Drawing.Size(29, 12);
+            this.operatorTypeLabel.TabIndex = 7;
+            this.operatorTypeLabel.Text = "人間";
             // 
             // TopControl
             // 
@@ -146,5 +157,6 @@
         private System.Windows.Forms.TextBox colorTextBox;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.ComboBox toolComboBox;
+        private System.Windows.Forms.Label operatorTypeLabel;
     }
 }

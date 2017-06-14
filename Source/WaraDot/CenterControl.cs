@@ -164,12 +164,6 @@ namespace WaraDot
             // 画像のサイズ内を指しているかチェック
             if (InImage(imgPt, form1.bitmap))
             {
-                // ランダム色打ち
-                //int r = Form1.rand.Next(256);
-                //int g = Form1.rand.Next(256);
-                //int b = Form1.rand.Next(256);
-                //form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
-
                 // 指定色打ち
                 form1.bitmap.SetPixel(imgPt.X, imgPt.Y, form1.Color);
 
@@ -340,7 +334,8 @@ namespace WaraDot
                         case Tools.Buckets:
                             {
                                 // 塗りつぶしたい
-                                Buckets.FillStart(e.X, e.Y, form1);
+                                form1.buckets = Buckets.Build(e.X, e.Y, form1);
+                                form1.OperatorType = OperatorType.Computer;
                             }
                             break;
                     }
