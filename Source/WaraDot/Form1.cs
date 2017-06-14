@@ -63,6 +63,22 @@ namespace WaraDot
         bool editing;
         #endregion
 
+        #region ペン色
+        public Color Color
+        {
+            get
+            {
+                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                return topControl1.GetColor();
+            }
+            set
+            {
+                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                topControl1.SyncColor(value);
+            }
+        }
+        #endregion
+
         public void RefreshCanvas()
         {
             centerControl1.RefreshCanvas();

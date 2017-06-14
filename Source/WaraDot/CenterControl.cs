@@ -144,6 +144,31 @@ namespace WaraDot
             }
         }
 
+        void DrawColor(int x, int y, Form1 form1)
+        {
+            #region 色塗り
+            // いったん画像の座標に変える
+            Point pt = ToImage(x, y, form1);
+
+            // 画像のサイズ内を指しているかチェック
+            if (InImage(pt, form1.bitmap))
+            {
+                //int r = Form1.rand.Next(256);
+                //int g = Form1.rand.Next(256);
+                //int b = Form1.rand.Next(256);
+                //form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
+
+                form1.bitmap.SetPixel(pt.X, pt.Y, form1.Color);
+
+                #region 保存フラグ
+                ((Form1)ParentForm).Editing = true;
+                #endregion
+
+                RefreshCanvas();
+            }
+            #endregion
+        }
+
         private void CenterControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (ParentForm is Form1 form1) // ビジュアル・エディターの初期化では、Form1 ではないぜ☆（＾～＾）
@@ -183,25 +208,8 @@ namespace WaraDot
                     }
                     else
                     {
-                        #region 色塗り
-                        // いったん画像の座標に変える
-                        Point pt = ToImage(e.X, e.Y, form1);
-
-                        // 画像のサイズ内を指しているかチェック
-                        if (InImage(pt, form1.bitmap))
-                        {
-                            int r = Form1.rand.Next(256);
-                            int g = Form1.rand.Next(256);
-                            int b = Form1.rand.Next(256);
-
-                            form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
-                            #region 保存フラグ
-                            ((Form1)ParentForm).Editing = true;
-                            #endregion
-
-                            RefreshCanvas();
-                        }
-                        #endregion
+                        // 色塗り
+                        DrawColor(e.X, e.Y, form1);
                     }
                 }
                 #endregion
@@ -254,6 +262,15 @@ namespace WaraDot
                 if (MouseButtons.Left == e.Button)
                 {
                     form1.pressingMouseLeft = true;
+
+                    // マウスの左ボタンを押下した直後も描画したい
+                    DrawColor(e.X, e.Y, form1);
+                }
+                else if (MouseButtons.Right == e.Button)
+                {
+                    // スポイト
+                    Point pt = ToImage(e.X, e.Y, form1);
+                    form1.Color = form1.bitmap.GetPixel(pt.X, pt.Y);
                 }
             }
         }
@@ -265,6 +282,9 @@ namespace WaraDot
                 if (MouseButtons.Left == e.Button)
                 {
                     form1.pressingMouseLeft = false;
+
+                    // マウスの左ボタンを放した直後にも描画したい。
+                    DrawColor(e.X, e.Y, form1);
                 }
             }
         }

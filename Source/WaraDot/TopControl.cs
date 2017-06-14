@@ -25,6 +25,20 @@ namespace WaraDot
         }
         #endregion
 
+        #region ペン色
+        public void SyncColor(Color color)
+        {
+            colorButton.BackColor = color;
+
+            // 参考:「HTMLカラーの色名表記と16進表記を相互に変換するには？」http://www.atmarkit.co.jp/fdotnet/dotnettips/239colorconv/colorconv.html
+            colorTextBox.Text = ColorTranslator.ToHtml(color);
+        }
+        public Color GetColor()
+        {
+            return colorButton.BackColor;
+        }
+        #endregion
+
         /// <summary>
         /// 画像を既定のファイルに保存します
         /// </summary>
@@ -78,6 +92,12 @@ namespace WaraDot
             Form1 form1 = (Form1)ParentForm;
             form1.ReloadConfig();
             form1.RefreshCanvas();
+        }
+
+        private void colorTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // 参考:「HTMLカラーの色名表記と16進表記を相互に変換するには？」http://www.atmarkit.co.jp/fdotnet/dotnettips/239colorconv/colorconv.html
+            colorButton.BackColor = ColorTranslator.FromHtml(colorTextBox.Text);
         }
     }
 }

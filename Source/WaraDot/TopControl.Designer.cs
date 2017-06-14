@@ -32,6 +32,8 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.noiseButton = new System.Windows.Forms.Button();
             this.reloadConfigButton = new System.Windows.Forms.Button();
+            this.colorButton = new System.Windows.Forms.Button();
+            this.colorTextBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,10 +52,12 @@
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
             this.flowLayoutPanel1.Controls.Add(this.noiseButton);
             this.flowLayoutPanel1.Controls.Add(this.reloadConfigButton);
+            this.flowLayoutPanel1.Controls.Add(this.colorButton);
+            this.flowLayoutPanel1.Controls.Add(this.colorTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(254, 150);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(460, 150);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // noiseButton
@@ -76,14 +80,31 @@
             this.reloadConfigButton.UseVisualStyleBackColor = true;
             this.reloadConfigButton.Click += new System.EventHandler(this.ReloadConfigButton_Click);
             // 
+            // colorButton
+            // 
+            this.colorButton.Location = new System.Drawing.Point(246, 3);
+            this.colorButton.Name = "colorButton";
+            this.colorButton.Size = new System.Drawing.Size(23, 23);
+            this.colorButton.TabIndex = 3;
+            this.colorButton.UseVisualStyleBackColor = true;
+            // 
+            // colorTextBox
+            // 
+            this.colorTextBox.Location = new System.Drawing.Point(275, 3);
+            this.colorTextBox.Name = "colorTextBox";
+            this.colorTextBox.Size = new System.Drawing.Size(59, 19);
+            this.colorTextBox.TabIndex = 4;
+            this.colorTextBox.TextChanged += new System.EventHandler(this.colorTextBox_TextChanged);
+            // 
             // TopControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "TopControl";
-            this.Size = new System.Drawing.Size(254, 150);
+            this.Size = new System.Drawing.Size(460, 150);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -94,5 +115,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button noiseButton;
         private System.Windows.Forms.Button reloadConfigButton;
+        private System.Windows.Forms.Button colorButton;
+        private System.Windows.Forms.TextBox colorTextBox;
     }
 }
