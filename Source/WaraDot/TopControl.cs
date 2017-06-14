@@ -97,7 +97,34 @@ namespace WaraDot
         private void colorTextBox_TextChanged(object sender, EventArgs e)
         {
             // 参考:「HTMLカラーの色名表記と16進表記を相互に変換するには？」http://www.atmarkit.co.jp/fdotnet/dotnettips/239colorconv/colorconv.html
-            colorButton.BackColor = ColorTranslator.FromHtml(colorTextBox.Text);
+            try
+            {
+                colorButton.BackColor = ColorTranslator.FromHtml(colorTextBox.Text);
+            }catch(Exception)
+            {
+                // 書式エラーなどは無視
+            }
+        }
+
+        /// <summary>
+        /// [白紙]ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            Bitmap img = ((Form1)ParentForm).bitmap;
+
+            // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
+            for (int y = 0; y < img.Height; y++)
+            {
+                for (int x = 0; x < img.Width; x++)
+                {
+                    img.SetPixel(x, y, Color.White);
+                }
+            }
+
+            ((Form1)ParentForm).RefreshCanvas();
         }
     }
 }

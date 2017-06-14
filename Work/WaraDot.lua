@@ -5,10 +5,10 @@ OX = 10
 OY = 100
 
 -- ‰æ‘œ‚Ì‰¡•
-WIDTH = 12;
+WIDTH = 300;
 
 -- ‰æ‘œ‚Ìc•
-HEIGHT = 6
+HEIGHT = 300
 
 -- ‰æ‘œ‚Ì”{—¦
-SCALE = 64
+SCALE = 4

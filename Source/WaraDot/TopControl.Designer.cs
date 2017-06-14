@@ -34,6 +34,7 @@
             this.reloadConfigButton = new System.Windows.Forms.Button();
             this.colorButton = new System.Windows.Forms.Button();
             this.colorTextBox = new System.Windows.Forms.TextBox();
+            this.clearButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,6 +55,7 @@
             this.flowLayoutPanel1.Controls.Add(this.reloadConfigButton);
             this.flowLayoutPanel1.Controls.Add(this.colorButton);
             this.flowLayoutPanel1.Controls.Add(this.colorTextBox);
+            this.flowLayoutPanel1.Controls.Add(this.clearButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -96,6 +98,16 @@
             this.colorTextBox.TabIndex = 4;
             this.colorTextBox.TextChanged += new System.EventHandler(this.colorTextBox_TextChanged);
             // 
+            // clearButton
+            // 
+            this.clearButton.Location = new System.Drawing.Point(340, 3);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(44, 23);
+            this.clearButton.TabIndex = 5;
+            this.clearButton.Text = "白紙";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
             // TopControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -117,5 +129,6 @@
         private System.Windows.Forms.Button reloadConfigButton;
         private System.Windows.Forms.Button colorButton;
         private System.Windows.Forms.TextBox colorTextBox;
+        private System.Windows.Forms.Button clearButton;
     }
 }

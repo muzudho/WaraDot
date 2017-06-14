@@ -144,27 +144,65 @@ namespace WaraDot
             }
         }
 
-        void DrawColor(int x, int y, Form1 form1)
+        /// <summary>
+        /// 点を打ちます
+        /// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
+        /// </summary>
+        /// <param name="mouseX"></param>
+        /// <param name="mouseY"></param>
+        /// <param name="form1"></param>
+        void DrawDot(int mouseX, int mouseY, Form1 form1, ref bool drawed)
         {
             #region 色塗り
             // いったん画像の座標に変える
-            Point pt = ToImage(x, y, form1);
+            Point pt = ToImage(mouseX, mouseY, form1);
 
             // 画像のサイズ内を指しているかチェック
             if (InImage(pt, form1.bitmap))
             {
+                // ランダム色打ち
                 //int r = Form1.rand.Next(256);
                 //int g = Form1.rand.Next(256);
                 //int b = Form1.rand.Next(256);
                 //form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
 
+                // 指定色打ち
                 form1.bitmap.SetPixel(pt.X, pt.Y, form1.Color);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
                 #endregion
+                drawed = true;
+            }
+            #endregion
+        }
 
-                RefreshCanvas();
+        /// <summary>
+        /// 線を引きます
+        /// 出典:「線を描く」http://dobon.net/vb/dotnet/graphics/drawline.html
+        /// </summary>
+        /// <param name="mouseX"></param>
+        /// <param name="mouseY"></param>
+        /// <param name="form1"></param>
+        void DrawLine(int mouseX, int mouseY, Form1 form1, ref bool drawed)
+        {
+            #region 色塗り
+            // いったん画像の座標に変える
+            Point pt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
+            Point pt2 = ToImage(mouseX, mouseY, form1);
+
+            // 画像のサイズ内を指しているかチェック
+            //if (InImage(pt2, form1.bitmap))
+            {
+                Graphics g = Graphics.FromImage(form1.bitmap);
+                Pen pen = new Pen(form1.Color);
+                g.DrawLine(pen, pt1, pt2);
+                g.Dispose();
+
+                #region 保存フラグ
+                ((Form1)ParentForm).Editing = true;
+                #endregion
+                drawed = true;
             }
             #endregion
         }
@@ -209,7 +247,8 @@ namespace WaraDot
                     else
                     {
                         // 色塗り
-                        DrawColor(e.X, e.Y, form1);
+                        DrawLine(e.X, e.Y, form1, ref refresh);
+                        refresh = true;
                     }
                 }
                 #endregion
@@ -264,7 +303,9 @@ namespace WaraDot
                     form1.pressingMouseLeft = true;
 
                     // マウスの左ボタンを押下した直後も描画したい
-                    DrawColor(e.X, e.Y, form1);
+                    bool drawed = false;
+                    DrawDot(e.X, e.Y, form1, ref drawed);
+                    if (drawed) { RefreshCanvas(); }
                 }
                 else if (MouseButtons.Right == e.Button)
                 {
@@ -284,7 +325,9 @@ namespace WaraDot
                     form1.pressingMouseLeft = false;
 
                     // マウスの左ボタンを放した直後にも描画したい。
-                    DrawColor(e.X, e.Y, form1);
+                    bool drawed = false;
+                    DrawDot(e.X, e.Y, form1, ref drawed);
+                    if (drawed) { RefreshCanvas(); }
                 }
             }
         }
