@@ -35,7 +35,7 @@ namespace WaraDot
 
         public void RefreshCanvas()
         {
-            ((CenterControl)centerPanel1.Controls["centerControl1"]).RefreshCanvas();
+            centerControl1.RefreshCanvas();
         }
 
         public Form1()
@@ -60,6 +60,12 @@ namespace WaraDot
             return img;
         }
 
+        public void ReloadConfig()
+        {
+            config = Config.ReloadLua(this);
+            centerControl1.OnReloadConfig();
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             #region Luaの初期設定
@@ -67,7 +73,7 @@ namespace WaraDot
             // 初期化
             lua.LoadCLRPackage();
 
-            config = Config.ReloadLua(this);
+            ReloadConfig();
 
             #endregion
 

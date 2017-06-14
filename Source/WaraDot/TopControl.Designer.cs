@@ -31,6 +31,7 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.noiseButton = new System.Windows.Forms.Button();
+            this.reloadConfigButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -42,12 +43,13 @@
             this.saveButton.TabIndex = 0;
             this.saveButton.Text = "保存";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
             this.flowLayoutPanel1.Controls.Add(this.noiseButton);
+            this.flowLayoutPanel1.Controls.Add(this.reloadConfigButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -62,7 +64,17 @@
             this.noiseButton.TabIndex = 1;
             this.noiseButton.Text = "ノイズ";
             this.noiseButton.UseVisualStyleBackColor = true;
-            this.noiseButton.Click += new System.EventHandler(this.noiseButton_Click);
+            this.noiseButton.Click += new System.EventHandler(this.NoiseButton_Click);
+            // 
+            // reloadConfigButton
+            // 
+            this.reloadConfigButton.Location = new System.Drawing.Point(165, 3);
+            this.reloadConfigButton.Name = "reloadConfigButton";
+            this.reloadConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.reloadConfigButton.TabIndex = 2;
+            this.reloadConfigButton.Text = "設定再読込";
+            this.reloadConfigButton.UseVisualStyleBackColor = true;
+            this.reloadConfigButton.Click += new System.EventHandler(this.ReloadConfigButton_Click);
             // 
             // TopControl
             // 
@@ -81,5 +93,6 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button noiseButton;
+        private System.Windows.Forms.Button reloadConfigButton;
     }
 }

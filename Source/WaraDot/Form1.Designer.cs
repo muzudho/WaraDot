@@ -28,31 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.centerPanel1 = new System.Windows.Forms.Panel();
             this.centerControl1 = new WaraDot.CenterControl();
             this.topPanel = new System.Windows.Forms.Panel();
             this.topControl1 = new WaraDot.TopControl();
-            this.centerPanel1.SuspendLayout();
             this.topPanel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // centerPanel1
-            // 
-            this.centerPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.centerPanel1.Controls.Add(this.centerControl1);
-            this.centerPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.centerPanel1.Location = new System.Drawing.Point(0, 0);
-            this.centerPanel1.Name = "centerPanel1";
-            this.centerPanel1.Size = new System.Drawing.Size(591, 469);
-            this.centerPanel1.TabIndex = 0;
             // 
             // centerControl1
             // 
             this.centerControl1.BackColor = System.Drawing.SystemColors.Control;
             this.centerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.centerControl1.Location = new System.Drawing.Point(0, 0);
+            this.centerControl1.Location = new System.Drawing.Point(0, 38);
             this.centerControl1.Name = "centerControl1";
-            this.centerControl1.Size = new System.Drawing.Size(591, 469);
+            this.centerControl1.Size = new System.Drawing.Size(591, 431);
             this.centerControl1.TabIndex = 0;
             // 
             // topPanel
@@ -79,20 +67,18 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 469);
+            this.Controls.Add(this.centerControl1);
             this.Controls.Add(this.topPanel);
-            this.Controls.Add(this.centerPanel1);
+            this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "わらドット";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.centerPanel1.ResumeLayout(false);
             this.topPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel centerPanel1;
         private System.Windows.Forms.Panel topPanel;
         private TopControl topControl1;
         private CenterControl centerControl1;

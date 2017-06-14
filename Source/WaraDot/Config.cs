@@ -8,8 +8,29 @@ namespace WaraDot
 {
     public class Config
     {
+        /// <summary>
+        /// 画像の左端
+        /// </summary>
+        public int ox;
+
+        /// <summary>
+        /// 画像の上端
+        /// </summary>
+        public int oy;
+
+        /// <summary>
+        /// 画像の横幅
+        /// </summary>
         public int width;
+
+        /// <summary>
+        /// 画像の縦幅
+        /// </summary>
         public int height;
+
+        /// <summary>
+        /// 画像の拡大率
+        /// </summary>
         public double scale;
 
         public static Config ReloadLua(Form1 form1)
@@ -32,7 +53,15 @@ namespace WaraDot
             // lua.GetFunction("init").Call();
 
             // double型 か null か、はたまた想定外の型か
-            var value = Form1.lua["WIDTH"];
+            var value = Form1.lua["OX"];
+            if (!(value is double)) { value = 100d; }
+            config.ox = (int)((double)value);
+
+            value = Form1.lua["OY"];
+            if (!(value is double)) { value = 100d; }
+            config.oy = (int)((double)value);
+
+            value = Form1.lua["WIDTH"];
             if (!(value is double)) { value = 100d; }
             config.width = (int)((double)value);
 

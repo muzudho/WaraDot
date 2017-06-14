@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace WaraDot
 {
@@ -23,7 +16,7 @@ namespace WaraDot
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void saveButton_Click(object sender, EventArgs e)
+        private void SaveButton_Click(object sender, EventArgs e)
         {
             // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
             ((Form1)ParentForm).bitmap.Save(Form1.IMAGE_FILE);
@@ -34,7 +27,7 @@ namespace WaraDot
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void noiseButton_Click(object sender, EventArgs e)
+        private void NoiseButton_Click(object sender, EventArgs e)
         {
             Bitmap img = ((Form1)ParentForm).bitmap;
             int r, g, b;
@@ -53,6 +46,13 @@ namespace WaraDot
             }
 
             ((Form1)ParentForm).RefreshCanvas();
+        }
+
+        private void ReloadConfigButton_Click(object sender, EventArgs e)
+        {
+            Form1 form1 = (Form1)ParentForm;
+            form1.ReloadConfig();
+            form1.RefreshCanvas();
         }
     }
 }

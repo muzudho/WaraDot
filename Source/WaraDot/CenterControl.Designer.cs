@@ -28,30 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.canvasPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
-            // 
-            // canvasPanel
-            // 
-            this.canvasPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.canvasPanel.Location = new System.Drawing.Point(0, 0);
-            this.canvasPanel.Name = "canvasPanel";
-            this.canvasPanel.Size = new System.Drawing.Size(150, 150);
-            this.canvasPanel.TabIndex = 0;
-            this.canvasPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.canvasPanel_Paint);
             // 
             // CenterControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.canvasPanel);
+            this.DoubleBuffered = true;
             this.Name = "CenterControl";
+            this.Load += new System.EventHandler(this.CenterControl_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.CenterControl_Paint);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CenterControl_MouseMove);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel canvasPanel;
     }
 }
