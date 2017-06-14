@@ -35,3 +35,6 @@ NLua.dll と、 KeraLua.dll を選択。
 ## ファイルの移動
 lua52.dll を Source/WaraDot/bin/x64/Debug に入れてください。
 
+## 作業用フォルダーの作成
+bin/x64/Debug の下（.exeがあるところ）に Work フォルダーを丸ごと移動させてください。
+

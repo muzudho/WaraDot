@@ -25,6 +25,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void saveButton_Click(object sender, EventArgs e)
         {
+            // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
             ((Form1)ParentForm).bitmap.Save(Form1.IMAGE_FILE);
         }
 
