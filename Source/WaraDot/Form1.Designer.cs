@@ -70,9 +70,11 @@
             this.Controls.Add(this.centerControl1);
             this.Controls.Add(this.topPanel);
             this.DoubleBuffered = true;
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "わらドット";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.topPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 

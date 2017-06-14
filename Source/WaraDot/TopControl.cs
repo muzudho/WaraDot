@@ -11,6 +11,33 @@ namespace WaraDot
             InitializeComponent();
         }
 
+        #region 保存フラグ
+        public void SyncEditing(bool value)
+        {
+            if (value)
+            {
+                saveButton.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                saveButton.BackColor = Color.LightGray;
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// 画像を既定のファイルに保存します
+        /// </summary>
+        public void Save()
+        {
+            // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
+            ((Form1)ParentForm).bitmap.Save(Form1.IMAGE_FILE);
+
+            #region 保存フラグ
+            ((Form1)ParentForm).Editing = false;
+            #endregion
+        }
+
         /// <summary>
         /// [保存]ボタン
         /// </summary>
@@ -18,8 +45,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
-            ((Form1)ParentForm).bitmap.Save(Form1.IMAGE_FILE);
+            Save();
         }
 
         /// <summary>

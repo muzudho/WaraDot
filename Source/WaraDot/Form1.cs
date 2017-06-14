@@ -42,6 +42,26 @@ namespace WaraDot
         /// </summary>
         public Config config;
 
+        #region 保存フラグ
+        /// <summary>
+        /// 編集した内容を、まだ保存していないなら真
+        /// </summary>
+        public bool Editing
+        {
+            get
+            {
+                return editing;
+            }
+            set
+            {
+                editing = value;
+
+                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                topControl1.SyncEditing(editing);
+            }
+        }
+        bool editing;
+        #endregion
 
         public void RefreshCanvas()
         {
@@ -100,7 +120,27 @@ namespace WaraDot
             }
             #endregion
 
+            #region 保存フラグ
+            // 初回のテキストボックスの内容変更は、未保存とは扱わない
+            Editing = false;
+            topControl1.SyncEditing(Editing);
+            #endregion
 
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Modifiers & Keys.Control) == Keys.Control)
+            {
+                if ((e.KeyData & Keys.S) == Keys.S)
+                {
+                    TopControl topUserControl1 = (TopControl)topPanel.Controls["topControl1"];
+                    topUserControl1.Save();
+
+                    // ビープ音を鳴らないようにする
+                    e.SuppressKeyPress = true;
+                }
+            }
         }
     }
 }

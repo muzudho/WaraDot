@@ -156,6 +156,10 @@ namespace WaraDot
                     int b = Form1.rand.Next(256);
 
                     form1.bitmap.SetPixel(pt.X, pt.Y, Color.FromArgb(r, g, b));
+                    #region 保存フラグ
+                    ((Form1)ParentForm).Editing = true;
+                    #endregion
+
                     RefreshCanvas();
                 }
 
