@@ -14,11 +14,12 @@ namespace WaraDot
         }
 
         #region ツールボックス
-        private void toolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void ToolComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (toolComboBox.SelectedIndex)
             {
                 case 1: tools = Tools.Buckets; break;
+                case 2: tools = Tools.Eraser; break;
                 default://thru
                 case 0: tools = Tools.FreeHandLine; break;
             }
@@ -69,6 +70,7 @@ namespace WaraDot
 
             // 参考:「HTMLカラーの色名表記と16進表記を相互に変換するには？」http://www.atmarkit.co.jp/fdotnet/dotnettips/239colorconv/colorconv.html
             colorTextBox.Text = ColorTranslator.ToHtml(color);
+            alphaTextBox.Text = color.A.ToString();
         }
         public Color GetColor()
         {
@@ -81,8 +83,9 @@ namespace WaraDot
         /// </summary>
         public void Save()
         {
+            Form1 form1 = (Form1)ParentForm;
             // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
-            ((Form1)ParentForm).bitmap.Save(Form1.IMAGE_FILE);
+            form1.config.GetDrawingLayerBitmap().Save(Config.GetImageFile(form1.config.drawingLayer));
 
             #region 保存フラグ
             ((Form1)ParentForm).Editing = false;
@@ -106,7 +109,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void NoiseButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = ((Form1)ParentForm).bitmap;
+            Bitmap img = ((Form1)ParentForm).config.GetDrawingLayerBitmap();
             int r, g, b;
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
@@ -131,16 +134,34 @@ namespace WaraDot
             form1.RefreshCanvas();
         }
 
-        private void colorTextBox_TextChanged(object sender, EventArgs e)
+        void OnColorTextChanged()
         {
             // 参考:「HTMLカラーの色名表記と16進表記を相互に変換するには？」http://www.atmarkit.co.jp/fdotnet/dotnettips/239colorconv/colorconv.html
             try
             {
-                colorButton.BackColor = ColorTranslator.FromHtml(colorTextBox.Text);
-            }catch(Exception)
+                Color c = ColorTranslator.FromHtml(colorTextBox.Text);
+
+                if (!int.TryParse(alphaTextBox.Text, out int alpha))
+                {
+                    alpha = 255;
+                }
+
+                colorButton.BackColor = Color.FromArgb(alpha, c.R, c.G, c.B);
+            }
+            catch (Exception)
             {
                 // 書式エラーなどは無視
             }
+        }
+
+        private void ColorTextBox_TextChanged(object sender, EventArgs e)
+        {
+            OnColorTextChanged();
+        }
+
+        private void AlphaTextBox_TextChanged(object sender, EventArgs e)
+        {
+            OnColorTextChanged();
         }
 
         /// <summary>
@@ -148,9 +169,9 @@ namespace WaraDot
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void clearButton_Click(object sender, EventArgs e)
+        private void ClearButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = ((Form1)ParentForm).bitmap;
+            Bitmap img = ((Form1)ParentForm).config.GetDrawingLayerBitmap();
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
             for (int y = 0; y < img.Height; y++)
@@ -164,7 +185,7 @@ namespace WaraDot
             ((Form1)ParentForm).RefreshCanvas();
         }
 
-        private void colorButton_Click(object sender, EventArgs e)
+        private void ColorButton_Click(object sender, EventArgs e)
         {
             // ランダム色打ち
             int r = Form1.rand.Next(256);

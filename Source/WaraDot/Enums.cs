@@ -34,6 +34,11 @@ namespace WaraDot
         /// <summary>
         /// 塗りつぶし
         /// </summary>
-        Buckets
+        Buckets,
+
+        /// <summary>
+        /// 消しゴム
+        /// </summary>
+        Eraser
     }
 }

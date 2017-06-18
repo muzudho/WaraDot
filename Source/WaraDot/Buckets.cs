@@ -22,7 +22,18 @@ namespace WaraDot
         bool[,] markboard_cache;
         List<Point> currentPoints;
         List<Point> nextPoints;
-        const int countMax = 100;//10000;
+        /// <summary>
+        /// 見てると飽きてくるんで、だんだん増やしていく。
+        /// </summary>
+        int countMax = 100;
+        /// <summary>
+        /// 増分。こいつも増やしていく。
+        /// </summary>
+        int countMaxStep = 10;
+        /// <summary>
+        /// 増やし過ぎると処理時間が追いつかなくなる？
+        /// </summary>
+        const int COUNT_MAX_LIMIT = 10000;
 
         public static Buckets Build(int mouseX, int mouseY, Form1 form1)
         {
@@ -39,11 +50,13 @@ namespace WaraDot
             // スタート地点
             Point imgPt = form1.ToImage(mouseX, mouseY);
             // マウス押下した地点の色
-            color_cache = form1.bitmap.GetPixel(imgPt.X, imgPt.Y);
+            color_cache = form1.config.GetDrawingLayerBitmap().GetPixel(imgPt.X, imgPt.Y);
 
             currentPoints = new List<Point>();
-            nextPoints = new List<Point>();
-            nextPoints.Add(imgPt);
+            nextPoints = new List<Point>
+            {
+                imgPt
+            };
         }
 
         public bool IsFinished()
@@ -58,14 +71,21 @@ namespace WaraDot
                 return;
             }
 
-            if (0 < nextPoints.Count)
+            currentPoints.Clear();
+            currentPoints.AddRange(nextPoints);
+            nextPoints.Clear();
+            for (int i = 0; i< currentPoints.Count; i++)
             {
-                currentPoints.Clear();
-                currentPoints.AddRange(nextPoints);
-                nextPoints.Clear();
-                for (int i = 0; i< currentPoints.Count; i++)
+                DrawAndSearch(currentPoints[i].X, currentPoints[i].Y);
+            }
+
+            if (countMax < COUNT_MAX_LIMIT)
+            {
+                countMax += countMaxStep;
+                countMaxStep++;
+                if (COUNT_MAX_LIMIT<countMax)
                 {
-                    DrawAndSearch(currentPoints[i].X, currentPoints[i].Y);
+                    countMax = COUNT_MAX_LIMIT;
                 }
             }
         }
@@ -76,7 +96,7 @@ namespace WaraDot
             markboard_cache[imgX, imgY] = true;
 
             // 指定した地点の色
-            Color color2 = form1_cache.bitmap.GetPixel(imgX, imgY);
+            Color color2 = form1_cache.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
 
             if (color2.Equals( color_cache))//一致した場合
             {

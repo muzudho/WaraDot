@@ -18,20 +18,12 @@ namespace WaraDot
         /// </summary>
         public static Random rand;
 
-        /// <summary>
-        /// 出力画像ファイル名
-        /// </summary>
-        public const string IMAGE_FILE = "Work/WaraDot.png";
+
 
         /// <summary>
         /// Luaファイル名
         /// </summary>
         public const string LUA_FILE = "Work/WaraDot.lua";
-
-        /// <summary>
-        /// 描画中の画像
-        /// </summary>
-        public Bitmap bitmap;
 
         /// <summary>
         /// Luaスクリプトを使う準備。
@@ -99,7 +91,7 @@ namespace WaraDot
             }
         }
 
-        public Tools GetTools()
+        public Tools GetTool()
         {
             TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
             return topControl1.tools;
@@ -117,25 +109,12 @@ namespace WaraDot
         }
 
         /// <summary>
-        /// 指定したファイルをロックせずに、System.Drawing.Imageを作成する。
-        /// 出典: 「表示中の画像ファイルが削除できない問題の解決法」http://dobon.net/vb/dotnet/graphics/drawpicture2.html
+        /// 設定再読込
         /// </summary>
-        /// <param name="filename">作成元のファイルのパス</param>
-        /// <returns>作成したSystem.Drawing.Image。</returns>
-        public static System.Drawing.Image CreateImage(string filename)
-        {
-            System.IO.FileStream fs = new System.IO.FileStream(
-                filename,
-                System.IO.FileMode.Open,
-                System.IO.FileAccess.Read);
-            System.Drawing.Image img = System.Drawing.Image.FromStream(fs);
-            fs.Close();
-            return img;
-        }
-
         public void ReloadConfig()
         {
             config = Config.ReloadLua(this);
+            config.ReloadLayerImages();
             centerControl1.OnReloadConfig();
         }
 
@@ -146,21 +125,13 @@ namespace WaraDot
             // 初期化
             lua.LoadCLRPackage();
 
+            // 設定読取
             ReloadConfig();
 
             #endregion
 
             #region 画像の読み込み、または新規作成
-            if (File.Exists(IMAGE_FILE))
-            {
-                //// 画像をそのまま読込むと、形式が分からないので、Bitmapインスタンスに移し替える。
-                //// 出典: 「簡単な画像処理と読み込み・保存（C#）」 http://qiita.com/Toshi332/items/2749690489730f32e63d
-                bitmap = new Bitmap(CreateImage(IMAGE_FILE));
-            }
-            else
-            {
-                bitmap = new Bitmap(config.width, config.height);
-            }
+            config.ReloadLayerImages();
             #endregion
 
             #region 保存フラグ

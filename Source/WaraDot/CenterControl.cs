@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace WaraDot
 {
@@ -135,7 +136,7 @@ namespace WaraDot
                 // いったん画像の座標に変える
                 Point pt = ToImage(e.X, e.Y, form1);
                 // 画像のサイズ内を指しているかチェック
-                if (InImage(pt, form1.bitmap))
+                if (InImage(pt, form1.config.GetDrawingLayerBitmap()))
                 {
                     // 画面の座標に戻す
                     pt = ToWindow(pt.X, pt.Y, form1);
@@ -162,10 +163,10 @@ namespace WaraDot
             Point imgPt = ToImage(mouseX, mouseY, form1);
 
             // 画像のサイズ内を指しているかチェック
-            if (InImage(imgPt, form1.bitmap))
+            if (InImage(imgPt, form1.config.GetDrawingLayerBitmap()))
             {
                 // 指定色打ち
-                form1.bitmap.SetPixel(imgPt.X, imgPt.Y, form1.Color);
+                form1.config.GetDrawingLayerBitmap().SetPixel(imgPt.X, imgPt.Y, form1.Color);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
@@ -184,10 +185,10 @@ namespace WaraDot
         public void DrawDotByImage(int imgX, int imgY, Form1 form1, ref bool drawed)
         {
             // 画像のサイズ内を指しているかチェック
-            if (InImage(imgX, imgY, form1.bitmap))
+            if (InImage(imgX, imgY, form1.config.GetDrawingLayerBitmap()))
             {
                 // 指定色打ち
-                form1.bitmap.SetPixel(imgX, imgY, form1.Color);
+                form1.config.GetDrawingLayerBitmap().SetPixel(imgX, imgY, form1.Color);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
@@ -203,26 +204,105 @@ namespace WaraDot
         /// <param name="mouseX"></param>
         /// <param name="mouseY"></param>
         /// <param name="form1"></param>
-        void DrawLine(int mouseX, int mouseY, Form1 form1, ref bool drawed)
+        void DrawLine(int mouseX, int mouseY, Form1 form1)
         {
             #region 色塗り
             // いったん画像の座標に変える
             Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
             Point imgPt2 = ToImage(mouseX, mouseY, form1);
 
-            // 画像のサイズ内を指しているかチェック
-            //if (InImage(pt2, form1.bitmap))
-            {
-                Graphics g = Graphics.FromImage(form1.bitmap);
-                Pen pen = new Pen(form1.Color);
-                g.DrawLine(pen, imgPt1, imgPt2);
-                g.Dispose();
+            Graphics g = Graphics.FromImage(form1.config.GetDrawingLayerBitmap());
+            Pen pen = new Pen(form1.Color);
+            g.DrawLine(pen, imgPt1, imgPt2);
+            g.Dispose();
 
-                #region 保存フラグ
-                ((Form1)ParentForm).Editing = true;
-                #endregion
-                drawed = true;
+            #region 保存フラグ
+            ((Form1)ParentForm).Editing = true;
+            #endregion
+            #endregion
+        }
+
+        /// <summary>
+        /// 線状に消します
+        /// </summary>
+        /// <param name="mouseX"></param>
+        /// <param name="mouseY"></param>
+        /// <param name="form1"></param>
+        void EraseLine(int mouseX, int mouseY, Form1 form1)
+        {
+            #region 消しゴム
+            Bitmap bitmap = form1.config.GetDrawingLayerBitmap();
+
+            // いったん画像の座標に変える
+            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
+            Point imgPt2 = ToImage(mouseX, mouseY, form1);
+
+            // ベクトル
+            int width = imgPt2.X - imgPt1.X;
+            int height = imgPt2.Y - imgPt1.Y;
+            // 辺が長い方をメインに考える
+            if (Math.Abs(height) < Math.Abs(width))
+            {
+                // 傾き(<1)
+                if (0 != width)//0除算防止
+                {
+                    float katamuki = (float)height / (float)width;
+
+                    // xを走査
+                    for (int x = 0; x < Math.Abs(width); x++)
+                    {
+                        // yを算出
+                        int y;
+                        if (-1 < width)
+                        {
+                            y = (int)(imgPt1.Y + katamuki * x);
+                        }
+                        else
+                        {
+                            y = (int)(imgPt2.Y + katamuki * x);
+                        }
+
+                        // 色を除去
+                        int dstX = x + Math.Min(imgPt1.X, imgPt2.X);
+                        bitmap.SetPixel(dstX, y, Color.Transparent);
+                        #region 保存フラグ
+                        ((Form1)ParentForm).Editing = true;
+                        #endregion
+                    }
+                }
             }
+            else
+            {
+
+                // 傾き(<1)
+                if (0 != height)//0除算防止
+                {
+                    float katamuki = (float)width / (float)height;
+
+                    // yを走査
+                    for (int y = 0; y < Math.Abs(height); y++)
+                    {
+                        // xを算出
+                        int x;
+                        if (-1 < height)
+                        {
+                            x = (int)(imgPt1.X + katamuki * y);
+                        }
+                        else
+                        {
+                            x = (int)(imgPt2.X + katamuki * y);
+                        }
+
+                        // 色を除去
+                        int dstY = y + Math.Min(imgPt1.Y, imgPt2.Y);
+                        bitmap.SetPixel(x, dstY, Color.Transparent);
+                        #region 保存フラグ
+                        ((Form1)ParentForm).Editing = true;
+                        #endregion
+                    }
+                }
+            }
+
             #endregion
         }
 
@@ -239,7 +319,7 @@ namespace WaraDot
                     Point pt = ToImage(e.X, e.Y, form1);
 
                     // 画像のサイズ内を指しているかチェック
-                    if (InImage(pt, form1.bitmap))
+                    if (InImage(pt, form1.config.GetDrawingLayerBitmap()))
                     {
                         // 画面の座標に戻す
                         pt = ToWindow(pt.X, pt.Y, form1);
@@ -266,8 +346,22 @@ namespace WaraDot
                     else
                     {
                         // 色塗り
-                        DrawLine(e.X, e.Y, form1, ref refresh);
-                        refresh = true;
+                        switch (form1.GetTool())
+                        {
+                            case Tools.Eraser:
+                                {
+                                    EraseLine(e.X, e.Y, form1);
+                                    refresh = true;
+                                }
+                                break;
+                            default:
+                            case Tools.FreeHandLine:
+                                {
+                                    DrawLine(e.X, e.Y, form1);
+                                    refresh = true;
+                                }
+                                break;
+                        }
                     }
                 }
                 #endregion
@@ -304,9 +398,15 @@ namespace WaraDot
                 // 出典: 「C# に挑戦 」http://d.hatena.ne.jp/umonist/20060902/p1
                 g.PixelOffsetMode = PixelOffsetMode.Half;
 
-                // 画像を、パネルに写すぜ☆（＾～＾）
-                // 上の方には　ツールバーが被っているので、少し下の方に表示しろだぜ☆（＾～＾）
-                g.DrawImage(form1.bitmap, target);
+                for (int i=1; i<form1.config.GetLayersCount(); i++)
+                {
+                    if (form1.config.layersVisible[i])
+                    {
+                        // 画像を、パネルに写すぜ☆（＾～＾）
+                        // 上の方には　ツールバーが被っているので、少し下の方に表示しろだぜ☆（＾～＾）
+                        g.DrawImage(form1.config.layersBitmap[i], target);
+                    }
+                }
 
                 // 指しているピクセルを枠で囲む。等倍のとき邪魔だが……☆（＾～＾）
                 g.DrawRectangle(pointerPen, pointerRect);
@@ -321,7 +421,7 @@ namespace WaraDot
                 {
                     form1.pressingMouseLeft = true;
 
-                    switch (form1.GetTools())
+                    switch (form1.GetTool())
                     {
                         case Tools.FreeHandLine:
                             {
@@ -344,7 +444,7 @@ namespace WaraDot
                 {
                     // スポイト
                     Point pt = ToImage(e.X, e.Y, form1);
-                    form1.Color = form1.bitmap.GetPixel(pt.X, pt.Y);
+                    form1.Color = form1.config.GetDrawingLayerBitmap().GetPixel(pt.X, pt.Y);
                 }
             }
         }
