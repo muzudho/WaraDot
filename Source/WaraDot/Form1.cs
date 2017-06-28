@@ -200,24 +200,51 @@ namespace WaraDot
         #endregion
 
         #region コンピューターの自動実行
-        public Buckets buckets;
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if (null!= buckets)
+            // バケツ
+            if (null!= Program.buckets)
             {
-                if (buckets.IsFinished())
+                if (Program.buckets.IsFinished())
                 {
-                    buckets = null;
+                    Program.buckets = null;
                     OperatorType = OperatorType.Human;
                 }
                 else
                 {
-                    buckets.Step();
+                    Program.buckets.Step();
+                    RefreshCanvas();
+                }
+            }
+
+            // ワンドット・イーター
+            if (null != Program.oneDotEater)
+            {
+                if (Program.oneDotEater.IsFinished())
+                {
+                    Program.oneDotEater = null;
+                    OperatorType = OperatorType.Human;
+                }
+                else
+                {
+                    Program.oneDotEater.Step();
                     RefreshCanvas();
                 }
             }
         }
         #endregion
+
+        /// <summary>
+        /// [アルゴリズム] - [1ドットイーター]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Algorithm1DotEaterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // 1ドットの点を消したい
+            Program.oneDotEater = OneDotEater.Build(this);
+            OperatorType = OperatorType.Computer;
+        }
     }
 }

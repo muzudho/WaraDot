@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace WaraDot
 {
@@ -90,6 +85,11 @@ namespace WaraDot
             }
         }
 
+        /// <summary>
+        /// Step() から呼び出される
+        /// </summary>
+        /// <param name="imgX"></param>
+        /// <param name="imgY"></param>
         void DrawAndSearch(int imgX, int imgY)
         {
             // 指定の升はとりあえずマークする

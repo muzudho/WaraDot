@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace WaraDot
 {
@@ -434,7 +426,7 @@ namespace WaraDot
                         case Tools.Buckets:
                             {
                                 // 塗りつぶしたい
-                                form1.buckets = Buckets.Build(e.X, e.Y, form1);
+                                Program.buckets = Buckets.Build(e.X, e.Y, form1);
                                 form1.OperatorType = OperatorType.Computer;
                             }
                             break;

@@ -18,5 +18,17 @@ namespace WaraDot
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
+
+        /// <summary>
+        /// バケツ
+        /// 未使用時はヌル
+        /// </summary>
+        public static Buckets buckets;
+        /// <summary>
+        /// ワンドット・イーター
+        /// 未使用時はヌル
+        /// </summary>
+        public static OneDotEater oneDotEater;
+
     }
 }
