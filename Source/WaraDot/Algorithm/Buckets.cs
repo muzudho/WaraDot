@@ -42,6 +42,18 @@ namespace WaraDot
 
             markboard_cache = new bool[Program.config.width, Program.config.height];
 
+            // 選択範囲の外は編集しないようにする
+            for (int y=0; y< Program.config.height; y++)
+            {
+                for (int x = 0; x < Program.config.width; x++)
+                {
+                    if (!Common.selectionImg.Contains(x, y))
+                    {
+                        markboard_cache[x, y] = true;
+                    }
+                }
+            }
+
             // スタート地点
             Point imgPt = form1.ToImage(mouseX, mouseY);
             // マウス押下した地点の色

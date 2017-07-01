@@ -160,7 +160,7 @@ namespace WaraDot
         #region 描画
         public Point ToImage(int mouseX, int mouseY)
         {
-            return centerControl1.ToImage(mouseX, mouseY, this);
+            return centerControl1.ToImage(mouseX, mouseY);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace WaraDot
 
         public void SyncPos(Point imgPt)
         {
-            centerControl1.SyncPos(imgPt.X, imgPt.Y, this);
+            centerControl1.SyncPos(imgPt.X, imgPt.Y);
         }
 
 
@@ -270,6 +270,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void Algorithm1DotEaterToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DoSelectionAll();
             // 1ドットの点を消したい
             Program.oneDotEater = OneDotEater.Build(this);
             OperatorType = OperatorType.Computer;
@@ -282,6 +283,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmBlackizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DoSelectionAll();
             Program.dotBlackize = DotBlackize.Build(this);
             OperatorType = OperatorType.Computer;
         }
@@ -293,6 +295,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmDotAverageToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DoSelectionAll();
             Program.dotAverage = DotAverage.Build(this);
             OperatorType = OperatorType.Computer;
         }
@@ -304,6 +307,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void DotTransparentClearToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DoSelectionAll();
             Program.dotTransparentClear = DotTransparentClear.Build(this);
             OperatorType = OperatorType.Computer;
         }
@@ -319,7 +323,16 @@ namespace WaraDot
         /// <param name="e"></param>
         private void SelectionCancelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            centerControl1.ClearSelection(this);
+            centerControl1.ClearSelection();
+            centerControl1.Refresh();
+        }
+
+        /// <summary>
+        /// 全選択
+        /// </summary>
+        public void DoSelectionAll()
+        {
+            centerControl1.DoSelectionAll();
             centerControl1.Refresh();
         }
 
@@ -330,8 +343,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void SelectionAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            centerControl1.DoSelectionAll(this);
-            centerControl1.Refresh();
+            DoSelectionAll();
         }
     }
 }

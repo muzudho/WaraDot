@@ -58,9 +58,9 @@ namespace WaraDot
         /// ペンが指しているピクセル
         /// </summary>
         Rectangle cursorRect;
-        public void SyncPos(int imgX, int imgY, Form1 form1)
+        public void SyncPos(int imgX, int imgY)
         {
-            Point windowPt = ToWindow(imgX, imgY, form1);
+            Point windowPt = ToWindow(imgX, imgY);
             cursorRect.X = windowPt.X;
             cursorRect.Y = windowPt.Y;
         }
@@ -68,20 +68,16 @@ namespace WaraDot
         float cursorPenWidth;
 
         /// <summary>
-        /// 選択範囲。無ければエンプティ
-        /// </summary>
-        Rectangle selectionImg = Rectangle.Empty;
-        /// <summary>
         /// 選択範囲
         /// </summary>
         Rectangle selectionWnd = Rectangle.Empty;
-        public void SyncSelection(Form1 form1)
+        public void SyncSelection()
         {
-            if(Rectangle.Empty != selectionImg)
+            if(Rectangle.Empty != Common.selectionImg)
             {
-                Trace.WriteLine("selectionImg ("+ selectionImg.X + ", "+ selectionImg.Y + ", "+ selectionImg.Width + ", "+ selectionImg.Height + ")");
-                Point windowPt = ToWindow(selectionImg.X, selectionImg.Y, form1);
-                Point windowEnd = ToWindow(selectionImg.X+selectionImg.Width, selectionImg.Y+selectionImg.Height, form1);
+                Trace.WriteLine("selectionImg ("+ Common.selectionImg.X + ", "+ Common.selectionImg.Y + ", "+ Common.selectionImg.Width + ", "+ Common.selectionImg.Height + ")");
+                Point windowPt = ToWindow(Common.selectionImg.X, Common.selectionImg.Y);
+                Point windowEnd = ToWindow(Common.selectionImg.X+ Common.selectionImg.Width, Common.selectionImg.Y+ Common.selectionImg.Height);
                 Trace.WriteLine("selectionWnd Pt(" + windowPt.X + ", " + windowPt.Y + ") end(" + windowEnd.X + ", " + windowEnd.Y + ")");
 
                 selectionWnd.X = windowPt.X;
@@ -101,21 +97,21 @@ namespace WaraDot
         /// <summary>
         /// 選択範囲の解除
         /// </summary>
-        public void ClearSelection(Form1 form1)
+        public void ClearSelection()
         {
-            selectionImg = Rectangle.Empty;
-            SyncSelection(form1);
+            Common.selectionImg = Rectangle.Empty;
+            SyncSelection();
         }
         /// <summary>
         /// 選択範囲の全選択
         /// </summary>
-        public void DoSelectionAll(Form1 form1)
+        public void DoSelectionAll()
         {
-            selectionImg.X = 0;
-            selectionImg.Y = 0;
-            selectionImg.Width = Program.config.GetDrawingLayerBitmap().Width;
-            selectionImg.Height = Program.config.GetDrawingLayerBitmap().Height;
-            SyncSelection(form1);
+            Common.selectionImg.X = 0;
+            Common.selectionImg.Y = 0;
+            Common.selectionImg.Width = Program.config.GetDrawingLayerBitmap().Width;
+            Common.selectionImg.Height = Program.config.GetDrawingLayerBitmap().Height;
+            SyncSelection();
         }
 
         /// <summary>
@@ -135,7 +131,7 @@ namespace WaraDot
         /// 使いまわす変数
         /// </summary>
         Point workImageLocation;
-        public Point ToImage(int mouseX, int mouseY, Form1 form1)
+        public Point ToImage(int mouseX, int mouseY)
         {
             workImageLocation.X = (int)((mouseX - target.X) / Program.config.scale);
             workImageLocation.Y = (int)((mouseY - target.Y) / Program.config.scale);
@@ -146,7 +142,7 @@ namespace WaraDot
         /// 使いまわす変数
         /// </summary>
         Point workWindowLocation;
-        Point ToWindow(int x, int y, Form1 form1)
+        Point ToWindow(int x, int y)
         {
             workWindowLocation.X = (int)(x * Program.config.scale + target.X);
             workWindowLocation.Y = (int)(y * Program.config.scale + target.Y);
@@ -187,12 +183,12 @@ namespace WaraDot
                     cursorRect.Height = (int)(Program.config.scale + cursorPenWidth / 2);
 
                     // いったん画像の座標に変える
-                    Point pt = ToImage(e.X, e.Y, form1);
+                    Point pt = ToImage(e.X, e.Y);
                     // 画像のサイズ内を指しているかチェック
                     if (InImage(pt, Program.config.GetDrawingLayerBitmap()))
                     {
                         // 画面の座標に戻す
-                        pt = ToWindow(pt.X, pt.Y, form1);
+                        pt = ToWindow(pt.X, pt.Y);
 
                         cursorRect.X = pt.X;
                         cursorRect.Y = pt.Y;
@@ -214,7 +210,7 @@ namespace WaraDot
         {
             #region 色塗り
             // いったん画像の座標に変える
-            Point imgPt = ToImage(mouseX, mouseY, form1);
+            Point imgPt = ToImage(mouseX, mouseY);
 
             // 画像のサイズ内を指しているかチェック
             if (InImage(imgPt, Program.config.GetDrawingLayerBitmap()))
@@ -262,8 +258,8 @@ namespace WaraDot
         {
             #region 色塗り
             // いったん画像の座標に変える
-            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
-            Point imgPt2 = ToImage(mouseX, mouseY, form1);
+            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y);
+            Point imgPt2 = ToImage(mouseX, mouseY);
 
             Graphics g = Graphics.FromImage(Program.config.GetDrawingLayerBitmap());
             Pen pen = new Pen(form1.Color);
@@ -281,15 +277,14 @@ namespace WaraDot
         /// </summary>
         /// <param name="mouseX"></param>
         /// <param name="mouseY"></param>
-        /// <param name="form1"></param>
-        void EraseLine(int mouseX, int mouseY, Form1 form1)
+        void EraseLine(int mouseX, int mouseY)
         {
             #region 消しゴム
             Bitmap bitmap = Program.config.GetDrawingLayerBitmap();
 
             // いったん画像の座標に変える
-            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y, form1);
-            Point imgPt2 = ToImage(mouseX, mouseY, form1);
+            Point imgPt1 = ToImage(previousMouse.X, previousMouse.Y);
+            Point imgPt2 = ToImage(mouseX, mouseY);
 
             // ベクトル
             int width = imgPt2.X - imgPt1.X;
@@ -371,13 +366,13 @@ namespace WaraDot
                 if (OperatorType.Human == form1.OperatorType)
                 {
                     // いったん画像の座標に変える
-                    Point pt = ToImage(e.X, e.Y, form1);
+                    Point pt = ToImage(e.X, e.Y);
 
                     // 画像のサイズ内を指しているかチェック
                     if (InImage(pt, Program.config.GetDrawingLayerBitmap()))
                     {
                         // 画面の座標に戻す
-                        pt = ToWindow(pt.X, pt.Y, form1);
+                        pt = ToWindow(pt.X, pt.Y);
 
                         if (pt.X != cursorRect.X || pt.Y != cursorRect.Y)
                         {
@@ -405,16 +400,16 @@ namespace WaraDot
                         {
                             case Tools.Eraser:
                                 {
-                                    EraseLine(e.X, e.Y, form1);
+                                    EraseLine(e.X, e.Y);
                                     refresh = true;
                                 }
                                 break;
                             case Tools.Selection:
                                 {
-                                    Point endPtImg = ToImage(e.X, e.Y, form1);
+                                    Point endPtImg = ToImage(e.X, e.Y);
                                     //selectionImg.Size = new Size(Math.Abs(endPtImg.X-selectionImg.X), Math.Abs(endPtImg.Y - selectionImg.Y));
-                                    selectionImg.Size = new Size(endPtImg.X - selectionImg.X, endPtImg.Y - selectionImg.Y);
-                                    SyncSelection(form1);
+                                    Common.selectionImg.Size = new Size(endPtImg.X - Common.selectionImg.X, endPtImg.Y - Common.selectionImg.Y);
+                                    SyncSelection();
                                     refresh = true;
                                 }
                                 break;
@@ -475,7 +470,7 @@ namespace WaraDot
                 // 指しているピクセルを枠で囲む。等倍のとき邪魔だが……☆（＾～＾）
                 g.DrawRectangle(cursorPen, cursorRect);
 
-                if (Rectangle.Empty != selectionImg)
+                if (Rectangle.Empty != Common.selectionImg)
                 {
                     // 選択範囲を描画する
                     g.DrawRectangle(Pens.Blue, selectionWnd);
@@ -502,9 +497,9 @@ namespace WaraDot
                             break;
                         case Tools.Selection:
                             {
-                                Point pt = ToImage(e.X, e.Y, form1);
-                                selectionImg = new Rectangle(pt.X, pt.Y, 1, 1);
-                                SyncSelection(form1);
+                                Point pt = ToImage(e.X, e.Y);
+                                Common.selectionImg = new Rectangle(pt.X, pt.Y, 1, 1);
+                                SyncSelection();
                                 RefreshCanvas();
                             }
                             break;
@@ -522,7 +517,7 @@ namespace WaraDot
                 else if (MouseButtons.Right == e.Button)
                 {
                     // スポイト
-                    Point pt = ToImage(e.X, e.Y, form1);
+                    Point pt = ToImage(e.X, e.Y);
                     form1.Color = Program.config.GetDrawingLayerBitmap().GetPixel(pt.X, pt.Y);
                 }
             }
