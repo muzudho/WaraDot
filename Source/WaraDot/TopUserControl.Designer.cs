@@ -1,6 +1,6 @@
 ﻿namespace WaraDot
 {
-    partial class TopControl
+    partial class TopUserControl
     {
         /// <summary> 
         /// 必要なデザイナー変数です。
@@ -74,7 +74,8 @@
             this.toolComboBox.Items.AddRange(new object[] {
             "フリーハンド線",
             "塗りつぶし",
-            "消しゴム"});
+            "消しゴム",
+            "選択範囲"});
             this.toolComboBox.Location = new System.Drawing.Point(84, 3);
             this.toolComboBox.Name = "toolComboBox";
             this.toolComboBox.Size = new System.Drawing.Size(121, 20);
@@ -146,12 +147,12 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
-            // TopControl
+            // TopUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Name = "TopControl";
+            this.Name = "TopUserControl";
             this.Size = new System.Drawing.Size(559, 150);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();

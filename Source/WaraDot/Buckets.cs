@@ -40,12 +40,12 @@ namespace WaraDot
         {
             form1_cache = form1;
 
-            markboard_cache = new bool[form1_cache.config.width, form1_cache.config.height];
+            markboard_cache = new bool[Program.config.width, Program.config.height];
 
             // スタート地点
             Point imgPt = form1.ToImage(mouseX, mouseY);
             // マウス押下した地点の色
-            color_cache = form1.config.GetDrawingLayerBitmap().GetPixel(imgPt.X, imgPt.Y);
+            color_cache = Program.config.GetDrawingLayerBitmap().GetPixel(imgPt.X, imgPt.Y);
 
             currentPoints = new List<Point>();
             nextPoints = new List<Point>
@@ -96,7 +96,7 @@ namespace WaraDot
             markboard_cache[imgX, imgY] = true;
 
             // 指定した地点の色
-            Color color2 = form1_cache.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
+            Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
 
             if (color2.Equals( color_cache))//一致した場合
             {
@@ -119,7 +119,7 @@ namespace WaraDot
                     //*
                     // 右
                     imgX++;
-                    if (imgX  < form1_cache.config.width && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (imgX  < Program.config.width && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }
@@ -128,7 +128,7 @@ namespace WaraDot
                     //*
                     // 下
                     imgY++;
-                    if (imgY  < form1_cache.config.height && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (imgY  < Program.config.height && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }

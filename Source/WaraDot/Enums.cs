@@ -39,6 +39,11 @@ namespace WaraDot
         /// <summary>
         /// 消しゴム
         /// </summary>
-        Eraser
+        Eraser,
+
+        /// <summary>
+        /// 矩形選択範囲
+        /// </summary>
+        Selection,
     }
 }

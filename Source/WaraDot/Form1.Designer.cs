@@ -29,13 +29,19 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.centerControl1 = new WaraDot.CenterControl();
+            this.centerControl1 = new WaraDot.CenterUserControl();
             this.topPanel = new System.Windows.Forms.Panel();
-            this.topControl1 = new WaraDot.TopControl();
+            this.topControl1 = new WaraDot.TopUserControl();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.アルゴリズムToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ドットイーターToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ブラッカイズToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ドットアベレージToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.半透明の透明化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.選択範囲ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SelectionAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SelectionCancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -75,7 +81,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.アルゴリズムToolStripMenuItem});
+            this.アルゴリズムToolStripMenuItem,
+            this.選択範囲ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(591, 24);
@@ -85,7 +92,10 @@
             // アルゴリズムToolStripMenuItem
             // 
             this.アルゴリズムToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ドットイーターToolStripMenuItem});
+            this.ドットイーターToolStripMenuItem,
+            this.ブラッカイズToolStripMenuItem,
+            this.ドットアベレージToolStripMenuItem,
+            this.半透明の透明化ToolStripMenuItem});
             this.アルゴリズムToolStripMenuItem.Name = "アルゴリズムToolStripMenuItem";
             this.アルゴリズムToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.アルゴリズムToolStripMenuItem.Text = "アルゴリズム";
@@ -93,9 +103,53 @@
             // ドットイーターToolStripMenuItem
             // 
             this.ドットイーターToolStripMenuItem.Name = "ドットイーターToolStripMenuItem";
-            this.ドットイーターToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ドットイーターToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.ドットイーターToolStripMenuItem.Text = "1ドットイーター";
             this.ドットイーターToolStripMenuItem.Click += new System.EventHandler(this.Algorithm1DotEaterToolStripMenuItem_Click);
+            // 
+            // ブラッカイズToolStripMenuItem
+            // 
+            this.ブラッカイズToolStripMenuItem.Name = "ブラッカイズToolStripMenuItem";
+            this.ブラッカイズToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.ブラッカイズToolStripMenuItem.Text = "ドット・ブラッカイズ";
+            this.ブラッカイズToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmBlackizeToolStripMenuItem_Click);
+            // 
+            // ドットアベレージToolStripMenuItem
+            // 
+            this.ドットアベレージToolStripMenuItem.Name = "ドットアベレージToolStripMenuItem";
+            this.ドットアベレージToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.ドットアベレージToolStripMenuItem.Text = "ドット・アベレージ";
+            this.ドットアベレージToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmDotAverageToolStripMenuItem_Click);
+            // 
+            // 半透明の透明化ToolStripMenuItem
+            // 
+            this.半透明の透明化ToolStripMenuItem.Name = "半透明の透明化ToolStripMenuItem";
+            this.半透明の透明化ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.半透明の透明化ToolStripMenuItem.Text = "半透明の透明化";
+            this.半透明の透明化ToolStripMenuItem.Click += new System.EventHandler(this.DotTransparentClearToolStripMenuItem_Click);
+            // 
+            // 選択範囲ToolStripMenuItem
+            // 
+            this.選択範囲ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SelectionAllToolStripMenuItem,
+            this.SelectionCancelToolStripMenuItem});
+            this.選択範囲ToolStripMenuItem.Name = "選択範囲ToolStripMenuItem";
+            this.選択範囲ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.選択範囲ToolStripMenuItem.Text = "選択範囲";
+            // 
+            // SelectionAllToolStripMenuItem
+            // 
+            this.SelectionAllToolStripMenuItem.Name = "SelectionAllToolStripMenuItem";
+            this.SelectionAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SelectionAllToolStripMenuItem.Text = "全選択";
+            this.SelectionAllToolStripMenuItem.Click += new System.EventHandler(this.SelectionAllToolStripMenuItem_Click);
+            // 
+            // SelectionCancelToolStripMenuItem
+            // 
+            this.SelectionCancelToolStripMenuItem.Name = "SelectionCancelToolStripMenuItem";
+            this.SelectionCancelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SelectionCancelToolStripMenuItem.Text = "解除";
+            this.SelectionCancelToolStripMenuItem.Click += new System.EventHandler(this.SelectionCancelToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -123,12 +177,18 @@
 
         #endregion
         private System.Windows.Forms.Panel topPanel;
-        private TopControl topControl1;
-        private CenterControl centerControl1;
+        private TopUserControl topControl1;
+        private CenterUserControl centerControl1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem アルゴリズムToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ドットイーターToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ブラッカイズToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ドットアベレージToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 半透明の透明化ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 選択範囲ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SelectionCancelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SelectionAllToolStripMenuItem;
     }
 }
 

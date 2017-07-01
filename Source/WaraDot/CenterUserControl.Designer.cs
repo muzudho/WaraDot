@@ -1,6 +1,6 @@
 ﻿namespace WaraDot
 {
-    partial class CenterControl
+    partial class CenterUserControl
     {
         /// <summary> 
         /// 必要なデザイナー変数です。

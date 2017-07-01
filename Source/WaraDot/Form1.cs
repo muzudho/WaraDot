@@ -18,22 +18,6 @@ namespace WaraDot
         /// </summary>
         public static Random rand;
 
-
-
-        /// <summary>
-        /// Luaファイル名
-        /// </summary>
-        public const string LUA_FILE = "Work/WaraDot.lua";
-
-        /// <summary>
-        /// Luaスクリプトを使う準備。
-        /// </summary>
-        public static Lua lua;
-        /// <summary>
-        /// 設定
-        /// </summary>
-        public Config config;
-
         #region 操作している者
         /// <summary>
         /// 操作している者
@@ -48,7 +32,7 @@ namespace WaraDot
             {
                 operatorType = value;
 
-                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                 topControl1.SyncOperatorType(value);
             }
         }
@@ -69,7 +53,7 @@ namespace WaraDot
             {
                 editing = value;
 
-                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                 topControl1.SyncEditing(editing);
             }
         }
@@ -81,19 +65,19 @@ namespace WaraDot
         {
             get
             {
-                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                 return topControl1.GetColor();
             }
             set
             {
-                TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                 topControl1.SyncColor(value);
             }
         }
 
         public Tools GetTool()
         {
-            TopControl topControl1 = (TopControl)topPanel.Controls["topControl1"];
+            TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
             return topControl1.tools;
         }
         #endregion
@@ -113,25 +97,18 @@ namespace WaraDot
         /// </summary>
         public void ReloadConfig()
         {
-            config = Config.ReloadLua(this);
-            config.ReloadLayerImages();
+            Program.config = Config.ReloadLua(this);
+            Program.config.ReloadLayerImages();
             centerControl1.OnReloadConfig();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            #region Luaの初期設定
-            lua = new Lua();
-            // 初期化
-            lua.LoadCLRPackage();
-
-            // 設定読取
+            // Luaファイル読取
             ReloadConfig();
 
-            #endregion
-
             #region 画像の読み込み、または新規作成
-            config.ReloadLayerImages();
+            Program.config.ReloadLayerImages();
             #endregion
 
             #region 保存フラグ
@@ -161,7 +138,7 @@ namespace WaraDot
             {
                 if ((e.KeyData & Keys.S) == Keys.S)
                 {
-                    TopControl topUserControl1 = (TopControl)topPanel.Controls["topControl1"];
+                    TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                     topUserControl1.Save();
 
                     // ビープ音を鳴らないようにする
@@ -232,8 +209,59 @@ namespace WaraDot
                     RefreshCanvas();
                 }
             }
+
+            // ドット・ブラッカイズ
+            if (null != Program.dotBlackize)
+            {
+                if (Program.dotBlackize.IsFinished())
+                {
+                    Program.dotBlackize = null;
+                    OperatorType = OperatorType.Human;
+                }
+                else
+                {
+                    Program.dotBlackize.Step();
+                    RefreshCanvas();
+                }
+            }
+
+            // ドット・アベレージ
+            if (null != Program.dotAverage)
+            {
+                if (Program.dotAverage.IsFinished())
+                {
+                    Program.dotAverage = null;
+                    OperatorType = OperatorType.Human;
+                }
+                else
+                {
+                    Program.dotAverage.Step();
+                    RefreshCanvas();
+                }
+            }
+
+            // ドット・トランスペアレント・クリアー
+            if (null != Program.dotTransparentClear)
+            {
+                if (Program.dotTransparentClear.IsFinished())
+                {
+                    Program.dotTransparentClear = null;
+                    OperatorType = OperatorType.Human;
+                }
+                else
+                {
+                    Program.dotTransparentClear.Step();
+                    RefreshCanvas();
+                }
+            }
         }
         #endregion
+
+        public void SyncPos(Point imgPt)
+        {
+            centerControl1.SyncPos(imgPt.X, imgPt.Y, this);
+        }
+
 
         /// <summary>
         /// [アルゴリズム] - [1ドットイーター]
@@ -245,6 +273,65 @@ namespace WaraDot
             // 1ドットの点を消したい
             Program.oneDotEater = OneDotEater.Build(this);
             OperatorType = OperatorType.Computer;
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [ドット・ブラッカイズ]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgorithmBlackizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.dotBlackize = DotBlackize.Build(this);
+            OperatorType = OperatorType.Computer;
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [ドット・アベレージ]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgorithmDotAverageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.dotAverage = DotAverage.Build(this);
+            OperatorType = OperatorType.Computer;
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [半透明の透明化]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DotTransparentClearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.dotTransparentClear = DotTransparentClear.Build(this);
+            OperatorType = OperatorType.Computer;
+        }
+
+        private void SelectionStartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// [選択範囲] - [解除]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectionCancelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            centerControl1.ClearSelection(this);
+            centerControl1.Refresh();
+        }
+
+        /// <summary>
+        /// [選択範囲] - [全選択]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectionAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            centerControl1.DoSelectionAll(this);
+            centerControl1.Refresh();
         }
     }
 }

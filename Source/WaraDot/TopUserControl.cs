@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace WaraDot
 {
-    public partial class TopControl : UserControl
+    public partial class TopUserControl : UserControl
     {
-        public TopControl()
+        public TopUserControl()
         {
             InitializeComponent();
 
@@ -20,6 +20,7 @@ namespace WaraDot
             {
                 case 1: tools = Tools.Buckets; break;
                 case 2: tools = Tools.Eraser; break;
+                case 3: tools = Tools.Selection; break;
                 default://thru
                 case 0: tools = Tools.FreeHandLine; break;
             }
@@ -85,7 +86,7 @@ namespace WaraDot
         {
             Form1 form1 = (Form1)ParentForm;
             // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
-            form1.config.GetDrawingLayerBitmap().Save(Config.GetImageFile(form1.config.drawingLayer));
+            Program.config.GetDrawingLayerBitmap().Save(Config.GetImageFile(Program.config.drawingLayer));
 
             #region 保存フラグ
             ((Form1)ParentForm).Editing = false;
@@ -109,7 +110,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void NoiseButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = ((Form1)ParentForm).config.GetDrawingLayerBitmap();
+            Bitmap img = Program.config.GetDrawingLayerBitmap();
             int r, g, b;
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
@@ -171,7 +172,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void ClearButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = ((Form1)ParentForm).config.GetDrawingLayerBitmap();
+            Bitmap img = Program.config.GetDrawingLayerBitmap();
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
             for (int y = 0; y < img.Height; y++)

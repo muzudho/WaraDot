@@ -6,11 +6,15 @@ namespace WaraDot
 {
     /// <summary>
     /// 1ドットイーター
+    /// 
+    /// 1ドット浮いていれば、周りの色で置換します
     /// </summary>
     public class OneDotEater
     {
         Form1 form1_cache;
+
         Point currentPoint;
+
         /// <summary>
         /// 見てると飽きてくるんで、だんだん増やしていく。
         /// </summary>
@@ -24,6 +28,8 @@ namespace WaraDot
         /// </summary>
         const int COUNT_MAX_LIMIT = 10000;
 
+        int done;
+
         public static OneDotEater Build(Form1 form1)
         {
             OneDotEater obj = new OneDotEater(form1);
@@ -36,12 +42,14 @@ namespace WaraDot
 
             // スタート地点
             currentPoint = new Point();
+            form1_cache.SyncPos(currentPoint);
+            done = 0;
         }
 
         public bool IsFinished()
         {
-            return currentPoint.X  == form1_cache.config.width &&
-                currentPoint.Y == form1_cache.config.height;
+            return currentPoint.X  == Program.config.width &&
+                currentPoint.Y == Program.config.height;
         }
 
         public void Step()
@@ -51,7 +59,7 @@ namespace WaraDot
                 return;
             }
 
-            Trace.WriteLine("cur(" + currentPoint.X + ", " + currentPoint.Y + ") img(" + form1_cache.config.width + ", " + form1_cache.config.height + ")");
+            Trace.WriteLine("cur(" + currentPoint.X + ", " + currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
 
             for (int i = 0; i < countMax; i++)
             {
@@ -80,7 +88,7 @@ namespace WaraDot
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = form1_cache.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
 
             // 指定した地点の四方の色
             Color north = Color.Transparent;
@@ -88,25 +96,25 @@ namespace WaraDot
                 currentPoint.Y--;
                 if (-1 < currentPoint.Y)
                 {
-                    north = form1_cache.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    north = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y++;
             }
             Color east = Color.Transparent;
             {
                 currentPoint.X++;
-                if (currentPoint.X < form1_cache.config.width)
+                if (currentPoint.X < Program.config.width)
                 {
-                    east = form1_cache.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    east = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X--;
             }
             Color south = Color.Transparent;
             {
                 currentPoint.Y++;
-                if (currentPoint.Y < form1_cache.config.height)
+                if (currentPoint.Y < Program.config.height)
                 {
-                    south = form1_cache.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    south = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y--;
             }
@@ -115,7 +123,7 @@ namespace WaraDot
                 currentPoint.X--;
                 if (-1 < currentPoint.X)
                 {
-                    west = form1_cache.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    west = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X++;
             }
@@ -146,24 +154,26 @@ namespace WaraDot
                 form1_cache.Color = aroundColor;
                 bool drawed = false;
                 form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                if (drawed) { done++; }
             }
 
             // 次の地点
-            if (currentPoint.X + 1 != form1_cache.config.width)
+            if (currentPoint.X + 1 != Program.config.width)
             {
                 currentPoint.X++;
             }
-            else if (currentPoint.Y + 1 != form1_cache.config.height)
+            else if (currentPoint.Y + 1 != Program.config.height)
             {
-                currentPoint.X=0;
+                currentPoint.X = 0;
                 currentPoint.Y++;
             }
             else
             {
                 // 終了
-                currentPoint.X = form1_cache.config.width;
-                currentPoint.Y = form1_cache.config.height;
+                currentPoint.X = Program.config.width;
+                currentPoint.Y = Program.config.height;
             }
+            form1_cache.SyncPos(currentPoint);
         }
 
     }

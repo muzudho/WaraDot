@@ -83,7 +83,7 @@ namespace WaraDot
         {
             Config config = new Config();
             // ファイルの読み込み
-            Form1.lua.DoFile(Form1.LUA_FILE);
+            Program.lua.DoFile(Program.LUA_FILE);
 
             // Lua「debugOut("あー☆")」
             // ↓
@@ -100,38 +100,38 @@ namespace WaraDot
 
             // double型 か null か、はたまた想定外の型か
             // 画像の左端
-            var value = Form1.lua["OX"];
+            var value = Program.lua["OX"];
             if (!(value is double)) { value = 100d; }
             config.ox = (int)((double)value);
 
             // 画像の上端
-            value = Form1.lua["OY"];
+            value = Program.lua["OY"];
             if (!(value is double)) { value = 100d; }
             config.oy = (int)((double)value);
 
             // 画像の横幅(300以下推奨)
-            value = Form1.lua["WIDTH"];
+            value = Program.lua["WIDTH"];
             if (!(value is double)) { value = 100d; }
             config.width = (int)((double)value);
 
             // 画像の縦幅(300以下推奨)
-            value = Form1.lua["HEIGHT"];
+            value = Program.lua["HEIGHT"];
             if (!(value is double)) { value = 100d; }
             config.height = (int)((double)value);
 
             // 画像の倍率
-            value = Form1.lua["SCALE"];
+            value = Program.lua["SCALE"];
             if (!(value is double)) { value = 1d; }
             config.scale = (double)value;
 
             // 描画対象レイヤー
-            value = Form1.lua["DRAWING_LAYER"];
+            value = Program.lua["DRAWING_LAYER"];
             Trace.WriteLine("DRAWING_LAYER Type = " + value.GetType().Name);
             if (!(value is double)) { value = 0d; }
             config.drawingLayer = (int)((double)value);
 
             // 描画対象レイヤー
-            LuaTable luaTable = Form1.lua.GetTable("LAYERS_VISIBLE");
+            LuaTable luaTable = Program.lua.GetTable("LAYERS_VISIBLE");
             Trace.WriteLine("LAYERS_VISIBLE Count = " + luaTable.Values.Count);
             config.layersVisible = new bool[luaTable.Values.Count+1];
             int i = 1;

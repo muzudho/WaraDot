@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using NLua;
+using System;
 using System.Windows.Forms;
 
 namespace WaraDot
@@ -20,6 +18,32 @@ namespace WaraDot
         }
 
         /// <summary>
+        /// Luaファイル名
+        /// </summary>
+        public const string LUA_FILE = "Work/WaraDot.lua";
+
+        /// <summary>
+        /// 静的コンストラクター
+        /// </summary>
+        static Program()
+        {
+            #region Luaの初期設定
+            lua = new Lua();
+            // 初期化
+            lua.LoadCLRPackage();
+            #endregion
+        }
+        /// <summary>
+        /// Luaスクリプト・ファイルを１個しか使わないのなら、インスタンス１つで十分。
+        /// </summary>
+        public static Lua lua;
+
+        /// <summary>
+        /// 設定
+        /// </summary>
+        public static Config config;
+
+        /// <summary>
         /// バケツ
         /// 未使用時はヌル
         /// </summary>
@@ -29,6 +53,20 @@ namespace WaraDot
         /// 未使用時はヌル
         /// </summary>
         public static OneDotEater oneDotEater;
+        /// <summary>
+        /// ドット・ブラッカイズ
+        /// 未使用時はヌル
+        /// </summary>
+        public static DotBlackize dotBlackize;
+        /// <summary>
+        /// ドット・アベレージ
+        /// 未使用時はヌル
+        /// </summary>
+        public static DotAverage dotAverage;
+        /// <summary>
+        /// 未使用時はヌル
+        /// </summary>
+        public static DotTransparentClear dotTransparentClear;
 
     }
 }

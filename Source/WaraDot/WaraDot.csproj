@@ -52,13 +52,12 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KeraLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\By_NLua\NLua.Win64\net45\KeraLua.dll</HintPath>
+    <Reference Include="KopiLua">
+      <HintPath>..\..\NLua.NoPInvoke\net45\KopiLua.dll</HintPath>
     </Reference>
     <Reference Include="NLua, Version=1.3.2.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\By_NLua\NLua.Win64\net45\NLua.dll</HintPath>
+      <HintPath>..\..\NLua.NoPInvoke\net45\NLua.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -74,13 +73,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buckets.cs" />
-    <Compile Include="CenterControl.cs">
+    <Compile Include="CenterUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CenterControl.Designer.cs">
-      <DependentUpon>CenterControl.cs</DependentUpon>
+    <Compile Include="CenterUserControl.Designer.cs">
+      <DependentUpon>CenterUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="DotTransparentClear.cs" />
+    <Compile Include="DotAverage.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -88,17 +89,18 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="DotBlackize.cs" />
     <Compile Include="OneDotEater.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TopControl.cs">
+    <Compile Include="TopUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TopControl.Designer.cs">
-      <DependentUpon>TopControl.cs</DependentUpon>
+    <Compile Include="TopUserControl.Designer.cs">
+      <DependentUpon>TopUserControl.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CenterControl.resx">
-      <DependentUpon>CenterControl.cs</DependentUpon>
+    <EmbeddedResource Include="CenterUserControl.resx">
+      <DependentUpon>CenterUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -112,8 +114,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="TopControl.resx">
-      <DependentUpon>TopControl.cs</DependentUpon>
+    <EmbeddedResource Include="TopUserControl.resx">
+      <DependentUpon>TopUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
