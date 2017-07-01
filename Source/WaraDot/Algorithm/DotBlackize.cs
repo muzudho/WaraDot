@@ -15,6 +15,12 @@ namespace WaraDot.Algorithm
     public class DotBlackize
     {
         Form1 form1_cache;
+
+        /// <summary>
+        /// フラグが立っているところは編集しない
+        /// </summary>
+        Markboard markboard;
+
         Point currentPoint;
         /// <summary>
         /// 見てると飽きてくるんで、だんだん増やしていく。
@@ -57,11 +63,13 @@ namespace WaraDot.Algorithm
         {
             form1_cache = form1;
 
+            markboard = new Markboard();
+            markboard.Init();
+            // スタート地点
+            currentPoint = new Point(Common.selectionImg.X, Common.selectionImg.Y);
+
             beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
             done = 0;
-
-            // スタート地点
-            currentPoint = new Point();
         }
 
         public bool IsFinished()
@@ -210,68 +218,103 @@ namespace WaraDot.Algorithm
             {
                 //Trace.WriteLine("ブラッカイズ！");
 
-                // 現在地点を、より白に近づけます
-                DrawWhiteout(multiplier * blackerCount);
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    // 現在地点を、より白に近づけます
+                    DrawWhiteout(multiplier * blackerCount);
+                }
 
                 //*
                 // 周囲を黒に近づけます
                 if (north.A == 255 && north.R < color2.R)
                 {
                     currentPoint.Y--;
-                    int next = north.R + multiplier*1;
-                    if (255 < next) { next = 255; }
-                    form1_cache.Color = Color.FromArgb(next, next, next);
-                    bool drawed = false;
-                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                    if (drawed) { done++; };
-                    currentPoint.Y++;
+                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    {
+                        int next = north.R + multiplier * 1;
+                        if (255 < next) { next = 255; }
+                        form1_cache.Color = Color.FromArgb(next, next, next);
+                        bool drawed = false;
+                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                        if (drawed) { done++; };
+                        currentPoint.Y++;
+                    }
                 }
 
                 if (east.A == 255 && east.R < color2.R)
                 {
                     currentPoint.X++;
-                    int next = east.R + multiplier * 1;
-                    if (255 < next) { next = 255; }
-                    form1_cache.Color = Color.FromArgb(next, next, next);
-                    bool drawed = false;
-                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                    if (drawed) { done++; };
-                    currentPoint.X--;
+                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    {
+                        int next = east.R + multiplier * 1;
+                        if (255 < next) { next = 255; }
+                        form1_cache.Color = Color.FromArgb(next, next, next);
+                        bool drawed = false;
+                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                        if (drawed) { done++; };
+                        currentPoint.X--;
+                    }
                 }
 
                 if (south.A == 255 && south.R < color2.R)
                 {
                     currentPoint.Y++;
-                    int next = south.R + multiplier * 1;
-                    if (255 < next) { next = 255; }
-                    form1_cache.Color = Color.FromArgb(next, next, next);
-                    bool drawed = false;
-                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                    if (drawed) { done++; };
-                    currentPoint.Y--;
+                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    {
+                        int next = south.R + multiplier * 1;
+                        if (255 < next) { next = 255; }
+                        form1_cache.Color = Color.FromArgb(next, next, next);
+                        bool drawed = false;
+                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                        if (drawed) { done++; };
+                        currentPoint.Y--;
+                    }
                 }
 
                 if (west.A == 255 && west.R < color2.R)
                 {
                     currentPoint.X--;
-                    int next = west.R + multiplier * 1;
-                    if (255 < next) { next = 255; }
-                    form1_cache.Color = Color.FromArgb(next, next, next);
-                    bool drawed = false;
-                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                    if (drawed) { done++; };
-                    currentPoint.X++;
+                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    {
+                        int next = west.R + multiplier * 1;
+                        if (255 < next) { next = 255; }
+                        form1_cache.Color = Color.FromArgb(next, next, next);
+                        bool drawed = false;
+                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                        if (drawed) { done++; };
+                        currentPoint.X++;
+                    }
                 }
                 //*/
             }
             // 透明の数が３、（自分より黒いセルの数が０、または同色のセルの数が１）　なら、自分がはみ出た色と判定
             else if (transparentCount==3 && (blackerCount==0||sameColorCount==1))
             {
-                // 現在地点を、より白に近づけます
-                DrawWhiteout(multiplier * transparentCount);
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    // 現在地点を、より白に近づけます
+                    DrawWhiteout(multiplier * transparentCount);
+                }
             }
 
             gt_Next:
+            // 次の地点
+            if (currentPoint.X + 1 < Common.selectionImg.X + Common.selectionImg.Width)// Program.config.width
+            {
+                currentPoint.X++;
+            }
+            else if (currentPoint.Y + 1 < Common.selectionImg.Y + Common.selectionImg.Height)// Program.config.height
+            {
+                currentPoint.X = Common.selectionImg.X;// 0;
+                currentPoint.Y++;
+            }
+            else
+            {
+                // 終了
+                currentPoint.X = Program.config.width;
+                currentPoint.Y = Program.config.height;
+            }
+/*
             // 次の地点
             if (currentPoint.X + 1 != Program.config.width)
             {
@@ -288,6 +331,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X = Program.config.width;
                 currentPoint.Y = Program.config.height;
             }
+*/
             form1_cache.SyncPos(currentPoint);
         }
 

@@ -50,3 +50,7 @@ bin/x64/Debug の下（.exeがあるところ）に Work フォルダーを丸�
 |レイヤー切替|DRAWING_LAYER|レイヤー1に書き込むならDRAWING_LAYER = 1と設定する|
 |レイヤー表示／非表示|LAYERS_VISIBLE|レイヤー1を非表示にするならLAYERS_VISIBLE[1] = false|
 
+# アルゴリズム
+
+選択範囲の矩形の中だけに有効です。
+

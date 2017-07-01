@@ -13,6 +13,11 @@ namespace WaraDot.Algorithm
     {
         Form1 form1_cache;
 
+        /// <summary>
+        /// フラグが立っているところは編集しない
+        /// </summary>
+        Markboard markboard;
+
         Point currentPoint;
 
         /// <summary>
@@ -40,8 +45,11 @@ namespace WaraDot.Algorithm
         {
             form1_cache = form1;
 
+            markboard = new Markboard();
+            markboard.Init();
             // スタート地点
-            currentPoint = new Point();
+            currentPoint = new Point(Common.selectionImg.X, Common.selectionImg.Y);
+
             form1_cache.SyncPos(currentPoint);
             done = 0;
         }
@@ -148,15 +156,37 @@ namespace WaraDot.Algorithm
                 aroundColor != color2
                 )
             {
-                Trace.WriteLine("イート！");
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    Trace.WriteLine("イート！");
 
-                // 指定の地点を、周りの色で塗ります
-                form1_cache.Color = aroundColor;
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; }
+                    // 指定の地点を、周りの色で塗ります
+                    form1_cache.Color = aroundColor;
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; }
+                }
+
             }
 
+            // 次の地点
+            if (currentPoint.X + 1 < Common.selectionImg.X + Common.selectionImg.Width)// Program.config.width
+            {
+                currentPoint.X++;
+            }
+            else if (currentPoint.Y + 1 < Common.selectionImg.Y + Common.selectionImg.Height)// Program.config.height
+            {
+                currentPoint.X = Common.selectionImg.X;// 0;
+                currentPoint.Y++;
+            }
+            else
+            {
+                // 終了
+                currentPoint.X = Program.config.width;
+                currentPoint.Y = Program.config.height;
+            }
+
+            /*
             // 次の地点
             if (currentPoint.X + 1 != Program.config.width)
             {
@@ -173,6 +203,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X = Program.config.width;
                 currentPoint.Y = Program.config.height;
             }
+            */
             form1_cache.SyncPos(currentPoint);
         }
 
