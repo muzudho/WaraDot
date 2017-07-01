@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace WaraDot
+namespace WaraDot.Algorithm
 {
     /// <summary>
     /// 1万ピクセルなら一瞬で塗りつぶせるが、
@@ -14,7 +14,12 @@ namespace WaraDot
     {
         Form1 form1_cache;
         Color color_cache;
-        bool[,] markboard_cache;
+
+        /// <summary>
+        /// フラグが立っているところは編集しない
+        /// </summary>
+        Markboard markboard;
+
         List<Point> currentPoints;
         List<Point> nextPoints;
         /// <summary>
@@ -40,19 +45,8 @@ namespace WaraDot
         {
             form1_cache = form1;
 
-            markboard_cache = new bool[Program.config.width, Program.config.height];
-
-            // 選択範囲の外は編集しないようにする
-            for (int y=0; y< Program.config.height; y++)
-            {
-                for (int x = 0; x < Program.config.width; x++)
-                {
-                    if (!Common.selectionImg.Contains(x, y))
-                    {
-                        markboard_cache[x, y] = true;
-                    }
-                }
-            }
+            markboard = new Markboard();
+            markboard.Init();
 
             // スタート地点
             Point imgPt = form1.ToImage(mouseX, mouseY);
@@ -105,7 +99,7 @@ namespace WaraDot
         void DrawAndSearch(int imgX, int imgY)
         {
             // 指定の升はとりあえずマークする
-            markboard_cache[imgX, imgY] = true;
+            markboard.Mark(imgX, imgY);
 
             // 指定した地点の色
             Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
@@ -122,7 +116,7 @@ namespace WaraDot
                     //*
                     // 上
                     imgY--;
-                    if (-1< imgY && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (-1< imgY && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
                     {
                         nextPoints.Add( new Point(imgX, imgY));
                     }
@@ -131,7 +125,7 @@ namespace WaraDot
                     //*
                     // 右
                     imgX++;
-                    if (imgX  < Program.config.width && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (imgX  < Program.config.width && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }
@@ -140,7 +134,7 @@ namespace WaraDot
                     //*
                     // 下
                     imgY++;
-                    if (imgY  < Program.config.height && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (imgY  < Program.config.height && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }
@@ -149,7 +143,7 @@ namespace WaraDot
                     //*
                     // 左
                     imgX--;
-                    if (-1 < imgX && !markboard_cache[imgX, imgY] && nextPoints.Count < countMax)
+                    if (-1 < imgX && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }

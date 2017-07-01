@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Diagnostics;
 
-namespace WaraDot
+namespace WaraDot.Algorithm
 {
     /// <summary>
     /// ドット・ブラッカイズ

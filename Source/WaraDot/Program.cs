@@ -1,6 +1,7 @@
 ﻿using NLua;
 using System;
 using System.Windows.Forms;
+using WaraDot.Algorithm;
 
 namespace WaraDot
 {

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System;
 
-namespace WaraDot
+namespace WaraDot.Algorithm
 {
     /// <summary>
     /// ドット・トランスペアレント・クリアー

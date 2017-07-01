@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System;
 
-namespace WaraDot
+namespace WaraDot.Algorithm
 {
     /// <summary>
     /// ドット・アベレージ
@@ -14,6 +14,12 @@ namespace WaraDot
     public class DotAverage
     {
         Form1 form1_cache;
+
+        /// <summary>
+        /// フラグが立っているところは編集しない
+        /// </summary>
+        Markboard markboard;
+
         Point currentPoint;
         /// <summary>
         /// 見てると飽きてくるんで、だんだん増やしていく。
@@ -48,11 +54,14 @@ namespace WaraDot
         {
             form1_cache = form1;
 
+            markboard = new Markboard();
+            markboard.Init();
+
             beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
             done = 0;
 
             // スタート地点
-            currentPoint = new Point();
+            currentPoint = new Point(Common.selectionImg.X, Common.selectionImg.Y);
         }
 
         public bool IsFinished()
@@ -168,71 +177,86 @@ namespace WaraDot
 
             // 現在地
             {
-                int next = color2.R + (0 < color2.R - average ? -near : near);
-                if (next < 1) { next = 0; }else if (255 < next) { next = 255; }
-                form1_cache.Color = Color.FromArgb(next, next, next);
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; };
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    int next = color2.R + (0 < color2.R - average ? -near : near);
+                    if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
+                    form1_cache.Color = Color.FromArgb(next, next, next);
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; };
+                }
             }
 
             if (north.A == 255)
             {
                 currentPoint.Y--;
-                int next = north.R + (0 < north.R - average ? -near : near);
-                if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
-                form1_cache.Color = Color.FromArgb(next, next, next);
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; };
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    int next = north.R + (0 < north.R - average ? -near : near);
+                    if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
+                    form1_cache.Color = Color.FromArgb(next, next, next);
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; };
+                }
                 currentPoint.Y++;
             }
 
             if (east.A == 255)
             {
                 currentPoint.X++;
-                int next = east.R + (0 < east.R - average ? -near : near);
-                if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
-                form1_cache.Color = Color.FromArgb(next, next, next);
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; };
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    int next = east.R + (0 < east.R - average ? -near : near);
+                    if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
+                    form1_cache.Color = Color.FromArgb(next, next, next);
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; };
+                }
                 currentPoint.X--;
             }
 
             if (south.A == 255)
             {
                 currentPoint.Y++;
-                int next = south.R + (0 < south.R - average ? -near : near);
-                if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
-                form1_cache.Color = Color.FromArgb(next, next, next);
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; };
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    int next = south.R + (0 < south.R - average ? -near : near);
+                    if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
+                    form1_cache.Color = Color.FromArgb(next, next, next);
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; };
+                }
                 currentPoint.Y--;
             }
 
             if (west.A == 255)
             {
                 currentPoint.X--;
-                int next = west.R + (0 < west.R - average ? -near : near);
-                if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
-                form1_cache.Color = Color.FromArgb(next, next, next);
-                bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                if (drawed) { done++; };
+                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                {
+                    int next = west.R + (0 < west.R - average ? -near : near);
+                    if (next < 1) { next = 0; } else if (255 < next) { next = 255; }
+                    form1_cache.Color = Color.FromArgb(next, next, next);
+                    bool drawed = false;
+                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    if (drawed) { done++; };
+                }
                 currentPoint.X++;
             }
 
             gt_Next:
             // 次の地点
-            if (currentPoint.X + 1 != Program.config.width)
+            if (currentPoint.X + 1 < Common.selectionImg.X+Common.selectionImg.Width)// Program.config.width
             {
                 currentPoint.X++;
             }
-            else if (currentPoint.Y + 1 != Program.config.height)
+            else if (currentPoint.Y + 1 < Common.selectionImg.Y+Common.selectionImg.Height)// Program.config.height
             {
-                currentPoint.X=0;
+                currentPoint.X = Common.selectionImg.X;// 0;
                 currentPoint.Y++;
             }
             else

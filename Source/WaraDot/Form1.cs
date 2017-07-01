@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using WaraDot.Algorithm;
 
 namespace WaraDot
 {
@@ -270,7 +271,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void Algorithm1DotEaterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DoSelectionAll();
+            //DoSelectionAll();
             // 1ドットの点を消したい
             Program.oneDotEater = OneDotEater.Build(this);
             OperatorType = OperatorType.Computer;
@@ -283,7 +284,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmBlackizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DoSelectionAll();
+            //DoSelectionAll();
             Program.dotBlackize = DotBlackize.Build(this);
             OperatorType = OperatorType.Computer;
         }
@@ -295,7 +296,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmDotAverageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DoSelectionAll();
+            //DoSelectionAll();
             Program.dotAverage = DotAverage.Build(this);
             OperatorType = OperatorType.Computer;
         }
@@ -307,7 +308,7 @@ namespace WaraDot
         /// <param name="e"></param>
         private void DotTransparentClearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DoSelectionAll();
+            //DoSelectionAll();
             Program.dotTransparentClear = DotTransparentClear.Build(this);
             OperatorType = OperatorType.Computer;
         }

@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\Buckets.cs" />
+    <Compile Include="Algorithm\Markboard.cs" />
     <Compile Include="CenterUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
