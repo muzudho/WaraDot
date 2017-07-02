@@ -111,40 +111,40 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定の升はとりあえずマークする
-            markboard.Mark(bucketsLikeCursorIteration.CurrentPoint);
+            markboard.Mark(bucketsLikeCursorIteration.Cursor);
 
             // 指定した地点の色
-            Color color2 = Program.config.GetLookingLayerPixel(bucketsLikeCursorIteration.CurrentPoint);
+            Color color2 = Program.config.GetLookingLayerPixel(bucketsLikeCursorIteration.Cursor);
 
             if (color2.Equals( color_cache))//一致した場合
             {
                 // 指定の地点をまず描画
                 bool drawed = false;
-                form1_cache.DrawDotByImage( bucketsLikeCursorIteration.CurrentPoint, ref drawed);
+                form1_cache.DrawDotByImage( bucketsLikeCursorIteration.Cursor, ref drawed);
                 if (drawed)
                 {
                     done++;
 
                     // 上
-                    if (bucketsLikeCursorIteration.GoToNorth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                    if (bucketsLikeCursorIteration.GoToNorth() && markboard.Editable(bucketsLikeCursorIteration.Cursor))
                     {
                         bucketsLikeCursorIteration.MarkNextPoint();
                     }
                     bucketsLikeCursorIteration.BackFromNorth();
                     // 右
-                    if (bucketsLikeCursorIteration.GoToEast() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                    if (bucketsLikeCursorIteration.GoToEast() && markboard.Editable(bucketsLikeCursorIteration.Cursor))
                     {
                         bucketsLikeCursorIteration.MarkNextPoint();
                     }
                     bucketsLikeCursorIteration.BackFromEast();
                     // 下
-                    if (bucketsLikeCursorIteration.GoToSouth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                    if (bucketsLikeCursorIteration.GoToSouth() && markboard.Editable(bucketsLikeCursorIteration.Cursor))
                     {
                         bucketsLikeCursorIteration.MarkNextPoint();
                     }
                     bucketsLikeCursorIteration.BackFromSouth();
                     // 左
-                    if (bucketsLikeCursorIteration.GoToWest() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                    if (bucketsLikeCursorIteration.GoToWest() && markboard.Editable(bucketsLikeCursorIteration.Cursor))
                     {
                         bucketsLikeCursorIteration.MarkNextPoint();
                     }

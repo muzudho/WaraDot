@@ -12,6 +12,7 @@ namespace WaraDot
         static Form1()
         {
             rand = new Random(Environment.TickCount);
+            drawingColor = SystemColors.Window;
         }
 
         /// <summary>
@@ -62,18 +63,24 @@ namespace WaraDot
         #endregion
 
         #region ペン色、ツールボックス
-        public Color Color
+        static Color drawingColor;
+        public Color DrawingColor
         {
             get
             {
-                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
-                return topControl1.GetColor();
+                return drawingColor;
             }
             set
             {
+                drawingColor = value;
                 TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
                 topControl1.SyncColor(value);
             }
+        }
+        public void RandomColor()
+        {
+            // ランダム色打ち
+            DrawingColor = Color.FromArgb(rand.Next(256), rand.Next(256), rand.Next(256));
         }
 
         public Tools GetTool()

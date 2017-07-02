@@ -73,7 +73,7 @@ namespace WaraDot.Algorithm
             Clear();
             markboard.Init();
             textLikeCursorIteration.Init();
-            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
+            form1_cache.SyncPos(textLikeCursorIteration.cursor);
         }
 
         public bool IsFinished()
@@ -108,24 +108,24 @@ namespace WaraDot.Algorithm
         /// <param name="imgY"></param>
         void DrawAndSearch()
         {
-            if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
+            if (markboard.Editable(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y))
             {
                 // 指定した地点の色
-                Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
+                Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
 
                 if (Color.Transparent != color2)
                 {
                     // 透明化
-                    form1_cache.Color = Color.Transparent;
+                    form1_cache.DrawingColor = Color.Transparent;
                     bool drawed = false;
-                    form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
+                    form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
                     if (drawed) { done++; };
                 }
             }
 
             // 次の地点
             textLikeCursorIteration.GoToNext();
-            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
+            form1_cache.SyncPos(textLikeCursorIteration.cursor);
         }
 
     }

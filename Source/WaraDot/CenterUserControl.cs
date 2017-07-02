@@ -217,7 +217,7 @@ namespace WaraDot
             if (InImage(imgPt, Program.config.LookingLayerBitmap))
             {
                 // 指定色打ち
-                Program.config.DrawingLayerBitmap.SetPixel(imgPt.X, imgPt.Y, form1.Color);
+                Program.config.DrawingLayerBitmap.SetPixel(imgPt.X, imgPt.Y, form1.DrawingColor);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
@@ -239,7 +239,7 @@ namespace WaraDot
             if (InImage(imgX, imgY, Program.config.LookingLayerBitmap))
             {
                 // 指定色打ち
-                Program.config.DrawingLayerBitmap.SetPixel(imgX, imgY, form1.Color);
+                Program.config.DrawingLayerBitmap.SetPixel(imgX, imgY, form1.DrawingColor);
 
                 #region 保存フラグ
                 ((Form1)ParentForm).Editing = true;
@@ -263,7 +263,7 @@ namespace WaraDot
             Point imgPt2 = ToImage(mouseX, mouseY);
 
             Graphics g = Graphics.FromImage(Program.config.LookingLayerBitmap);
-            Pen pen = new Pen(form1.Color);
+            Pen pen = new Pen(form1.DrawingColor);
             g.DrawLine(pen, imgPt1, imgPt2);
             g.Dispose();
 
@@ -524,7 +524,7 @@ namespace WaraDot
                 {
                     // スポイト
                     Point pt = ToImage(e.X, e.Y);
-                    form1.Color = Program.config.DrawingLayerBitmap.GetPixel(pt.X, pt.Y);
+                    form1.DrawingColor = Program.config.DrawingLayerBitmap.GetPixel(pt.X, pt.Y);
                 }
             }
         }

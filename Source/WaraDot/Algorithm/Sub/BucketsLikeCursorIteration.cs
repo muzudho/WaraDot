@@ -76,7 +76,10 @@ namespace WaraDot.Algorithm.Sub
             currentElementIndex++;
             return currentElementIndex < currentPoints.Count;
         }
-        public Point CurrentPoint
+        /// <summary>
+        /// 指している座標
+        /// </summary>
+        public Point Cursor
         {
             get
             {
@@ -85,7 +88,7 @@ namespace WaraDot.Algorithm.Sub
         }
         public void OffsetCurrentPoint(int dx, int dy)
         {
-            currentPoints[currentElementIndex] = new Point(CurrentPoint.X + dx, CurrentPoint.Y + dy);
+            currentPoints[currentElementIndex] = new Point(Cursor.X + dx, Cursor.Y + dy);
         }
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace WaraDot.Algorithm.Sub
         /// <param name="iPt"></param>
         public void MarkNextPoint()
         {
-            nextPoints.Add(CurrentPoint);
+            nextPoints.Add(Cursor);
         }
 
         /// <summary>
@@ -105,7 +108,7 @@ namespace WaraDot.Algorithm.Sub
         public bool GoToNorth()
         {
             OffsetCurrentPoint(0, -1);
-            return -1 < CurrentPoint.Y;
+            return -1 < Cursor.Y;
         }
         public void BackFromNorth()
         {
@@ -114,7 +117,7 @@ namespace WaraDot.Algorithm.Sub
         public bool GoToEast()
         {
             OffsetCurrentPoint(1, 0);
-            return CurrentPoint.X < Program.config.width;
+            return Cursor.X < Program.config.width;
         }
         public void BackFromEast()
         {
@@ -123,7 +126,7 @@ namespace WaraDot.Algorithm.Sub
         public bool GoToSouth()
         {
             OffsetCurrentPoint(0, 1);
-            return CurrentPoint.Y < Program.config.height;
+            return Cursor.Y < Program.config.height;
         }
         public void BackFromSouth()
         {
@@ -132,7 +135,7 @@ namespace WaraDot.Algorithm.Sub
         public bool GoToWest()
         {
             OffsetCurrentPoint(-1, 0);
-            return -1 < CurrentPoint.X;
+            return -1 < Cursor.X;
         }
         public void BackFromWest()
         {

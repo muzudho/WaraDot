@@ -187,11 +187,9 @@ namespace WaraDot
 
         private void ColorButton_Click(object sender, EventArgs e)
         {
+            Form1 form1 = ((Form1)ParentForm);
             // ランダム色打ち
-            int r = Form1.rand.Next(256);
-            int g = Form1.rand.Next(256);
-            int b = Form1.rand.Next(256);
-            SyncColor(Color.FromArgb(r, g, b));
+            form1.RandomColor();
         }
     }
 }

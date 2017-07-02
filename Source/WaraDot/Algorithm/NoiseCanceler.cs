@@ -31,12 +31,12 @@ namespace WaraDot.Algorithm
         /// <summary>
         /// 選択範囲の左上隅から右端へ、改行して左端から右端へ、といった順でカーソル移動
         /// </summary>
-        TextLikeCursorIteration textLikeCursorIteration;
+        TextLikeCursorIteration textlike;
 
         /// <summary>
         /// バケツ（塗りつぶし）のようなカーソル移動
         /// </summary>
-        BucketsLikeCursorIteration bucketsLikeCursorIteration;
+        BucketsLikeCursorIteration bucketslike;
 
         /// <summary>
         /// 時間制御
@@ -53,6 +53,9 @@ namespace WaraDot.Algorithm
         /// </summary>
         int done;
 
+        List<Point> selection;
+        Color startColor;
+
         static NoiseCanceler instance;
         public static IAlgorithm Instance(Form1 form1)
         {
@@ -67,8 +70,9 @@ namespace WaraDot.Algorithm
             form1_cache = form1;
             timeManager = new TimeManager();
             markboard = new Markboard();
-            textLikeCursorIteration = new TextLikeCursorIteration();
-            bucketsLikeCursorIteration = new BucketsLikeCursorIteration(form1);
+            textlike = new TextLikeCursorIteration();
+            bucketslike = new BucketsLikeCursorIteration(form1);
+            selection = new List<Point>();
         }
         public void Clear()
         {
@@ -76,22 +80,24 @@ namespace WaraDot.Algorithm
             done = 0;
             timeManager.Clear();
             markboard.Clear();
-            bucketsLikeCursorIteration.Clear();
+            bucketslike.Clear();
+            selection.Clear();
         }
         public void Init()
         {
             Clear();
             markboard.Init();
             // テキスト読みの開始位置
-            textLikeCursorIteration.Init();
-            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
+            textlike.Init();
+            form1_cache.SyncPos(textlike.cursor);
             // バケツ読みの開始位置
-            bucketsLikeCursorIteration.Init(textLikeCursorIteration.currentPoint);
+            bucketslike.Init(textlike.cursor);
+            startColor = Program.config.GetLookingLayerPixel(textlike.cursor);
         }
 
         public bool IsFinished()
         {
-            return textLikeCursorIteration.IsFinished();
+            return textlike.IsFinished();
         }
 
         public void Tick()
@@ -101,11 +107,20 @@ namespace WaraDot.Algorithm
                 return;
             }
 
-            // バケツスキャン
-            bucketsLikeCursorIteration.BeginIteration();
-            while (bucketsLikeCursorIteration.Iterate())
+            bool nextText = false;
+
+            if (Color.Transparent == startColor)
             {
-                if (bucketsLikeCursorIteration.NextPointsCount < timeManager.countMax)
+                // 透明の色は処理しない
+                nextText = true;
+                goto gt_nextText;
+            }
+
+            // バケツスキャン
+            bucketslike.BeginIteration();
+            while (bucketslike.Iterate())
+            {
+                if (bucketslike.NextPointsCount < timeManager.countMax)
                 {
                     DrawAndSearch();
                 }
@@ -114,20 +129,50 @@ namespace WaraDot.Algorithm
                     break;
                 }
             }
-            bucketsLikeCursorIteration.EndIteration();
+            bucketslike.EndIteration();
 
+
+            if (!bucketslike.HasNextPoints())
+            {
+                // バケツスキャンが終わった時
+                if (1< selection.Count && selection.Count< 13)
+                {
+                    // 2ドット以上、13ドット未満はノイズと判定
+                    Trace.WriteLine("selection.Count=" + selection.Count + " ノイズと判定");
+
+                    // ノイズは透明化
+                    foreach (Point pt in selection)
+                    {
+                        form1_cache.DrawingColor = form1_cache.DrawingColor;// Color.Transparent;
+                        bool drawed = false;
+                        form1_cache.DrawDotByImage(pt, ref drawed);
+                        if (drawed) { done++; };
+                    }
+                }
+                else
+                {
+                    Trace.WriteLine("selectionPoints.Count=" + selection.Count);
+                }
+
+                nextText = true;
+            }
 
             // テキスト読み走査
-            if (!bucketsLikeCursorIteration.HasNextPoints())
+            gt_nextText:
+            if (nextText)
             {
+                // カーソルを進める
+                textlike.GoToNext();
+                form1_cache.SyncPos(textlike.cursor);
+
+                // 境界判定
                 if (!IsFinished())
                 {
-                    // 次の地点
-                    textLikeCursorIteration.GoToNext();
-                    form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
+                    selection.Clear();
+                    startColor = Program.config.GetLookingLayerPixel(textlike.cursor);
 
                     // バケツの開始位置を変更
-                    bucketsLikeCursorIteration.Init(textLikeCursorIteration.currentPoint);
+                    bucketslike.Init(textlike.cursor);
                 }
             }
 
@@ -136,7 +181,7 @@ namespace WaraDot.Algorithm
 
         public bool IsFinishedScan()
         {
-            return textLikeCursorIteration.IsFinished();
+            return textlike.IsFinished();
         }
 
         /// <summary>
@@ -147,46 +192,41 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = Program.config.GetLookingLayerPixel(bucketsLikeCursorIteration.CurrentPoint);
+            Color color2 = Program.config.GetLookingLayerPixel(bucketslike.Cursor);
 
-            if (true)//Color.Transparent != color2)//透明でない場合
+            if (startColor == color2)
             {
                 // 指定の升
                 {
                     // 指定の升はとりあえずマークする
-                    markboard.Mark(bucketsLikeCursorIteration.CurrentPoint);
-
-                    // ノイズは透明化
-                    form1_cache.Color = Color.Red;//  Color.Transparent;
-                    bool drawed = false;
-                    form1_cache.DrawDotByImage(bucketsLikeCursorIteration.CurrentPoint, ref drawed);
-                    if (drawed) { done++; };
+                    markboard.Mark(bucketslike.Cursor);
+                    selection.Add(bucketslike.Cursor);
                 }
 
                 // 上
-                if (bucketsLikeCursorIteration.GoToNorth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                if (bucketslike.GoToNorth() && markboard.Editable(bucketslike.Cursor))
                 {
-                    bucketsLikeCursorIteration.MarkNextPoint();
+                    bucketslike.MarkNextPoint();
                 }
-                bucketsLikeCursorIteration.BackFromNorth();
+                bucketslike.BackFromNorth();
                 // 右
-                if (bucketsLikeCursorIteration.GoToEast() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                if (bucketslike.GoToEast() && markboard.Editable(bucketslike.Cursor))
                 {
-                    bucketsLikeCursorIteration.MarkNextPoint();
+                    bucketslike.MarkNextPoint();
                 }
-                bucketsLikeCursorIteration.BackFromEast();
+                bucketslike.BackFromEast();
                 // 下
-                if (bucketsLikeCursorIteration.GoToSouth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                if (bucketslike.GoToSouth() && markboard.Editable(bucketslike.Cursor))
                 {
-                    bucketsLikeCursorIteration.MarkNextPoint();
+                    bucketslike.MarkNextPoint();
                 }
-                bucketsLikeCursorIteration.BackFromSouth();
+                bucketslike.BackFromSouth();
                 // 左
-                if (bucketsLikeCursorIteration.GoToWest() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
+                if (bucketslike.GoToWest() && markboard.Editable(bucketslike.Cursor))
                 {
-                    bucketsLikeCursorIteration.MarkNextPoint();
+                    bucketslike.MarkNextPoint();
                 }
-                bucketsLikeCursorIteration.BackFromWest();
+                bucketslike.BackFromWest();
             }
         }
 

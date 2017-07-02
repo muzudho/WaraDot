@@ -12,74 +12,77 @@ namespace WaraDot.Algorithm.Sub
     /// </summary>
     public class TextLikeCursorIteration
     {
-        public Point currentPoint;
+        /// <summary>
+        /// 指している点
+        /// </summary>
+        public Point cursor;
 
         public void Init()
         {
             // スタート地点
-            currentPoint = new Point(Program.selectionImg.X, Program.selectionImg.Y);
+            cursor = new Point(Program.selectionImg.X, Program.selectionImg.Y);
         }
 
         public bool IsFinished()
         {
-            return currentPoint.X == Program.config.width &&
-                currentPoint.Y == Program.config.height;
+            return Program.config.width <= cursor.X &&
+                Program.config.height <= cursor.Y;
         }
 
         public void GoToNext()
         {
             // 次の地点
-            if (currentPoint.X + 1 < Program.selectionImg.X + Program.selectionImg.Width)// Program.config.width
+            if (cursor.X + 1 < Program.selectionImg.X + Program.selectionImg.Width)// Program.config.width
             {
-                currentPoint.X++;
+                cursor.X++;
             }
-            else if (currentPoint.Y + 1 < Program.selectionImg.Y + Program.selectionImg.Height)// Program.config.height
+            else if (cursor.Y + 1 < Program.selectionImg.Y + Program.selectionImg.Height)// Program.config.height
             {
-                currentPoint.X = Program.selectionImg.X;// 0;
-                currentPoint.Y++;
+                cursor.X = Program.selectionImg.X;// 0;
+                cursor.Y++;
             }
             else
             {
                 // 終了
-                currentPoint.X = Program.config.width;
-                currentPoint.Y = Program.config.height;
+                cursor.X = Program.config.width;
+                cursor.Y = Program.config.height;
             }
         }
         public bool GoToNorth()
         {
-            currentPoint.Y--;
-            return -1 < currentPoint.Y;
+            cursor.Y--;
+            return -1 < cursor.Y;
         }
         public void BackFromNorth()
         {
-            currentPoint.Y++;
+            cursor.Y++;
         }
         public bool GoToEast()
         {
-            currentPoint.X++;
-            return currentPoint.X < Program.config.width;
+            cursor.X++;
+            return cursor.X < Program.config.width;
         }
         public void BackFromEast()
         {
-            currentPoint.X--;
+            cursor.X--;
         }
         public bool GoToSouth()
         {
-            currentPoint.Y++;
-            return currentPoint.Y < Program.config.height;
+            cursor.Y++;
+            return cursor.Y < Program.config.height;
         }
         public void BackFromSouth()
         {
-            currentPoint.Y--;
+            cursor.Y--;
         }
         public bool GoToWest()
         {
-            currentPoint.X--;
-            return -1 < currentPoint.X;
+            cursor.X--;
+            return -1 < cursor.X;
         }
         public void BackFromWest()
         {
-            currentPoint.X++;
+            cursor.X++;
         }
     }
 }
