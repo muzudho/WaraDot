@@ -1,9 +1,8 @@
 ﻿using NLua;
 using System;
-using System.Windows.Forms;
-using WaraDot.Algorithm;
 using System.Drawing;
-using System.Collections.Generic;
+using System.Windows.Forms;
+using WaraDot.Algorithm.Sub;
 
 namespace WaraDot
 {

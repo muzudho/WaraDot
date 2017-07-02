@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Drawing;
-using System.Diagnostics;
+using WaraDot.Algorithm.Sub;
 
 namespace WaraDot.Algorithm
 {
@@ -29,19 +29,15 @@ namespace WaraDot.Algorithm
         /// </summary>
         Markboard markboard;
 
-        Point currentPoint;
         /// <summary>
-        /// 見てると飽きてくるんで、だんだん増やしていく。
+        /// 選択範囲の左上隅から右端へ、改行して左端から右端へ、といった順でカーソル移動
         /// </summary>
-        int countMax = 100;
+        TextLikeCursorIteration textLikeCursorIteration;
+
         /// <summary>
-        /// 増分。こいつも増やしていく。
+        /// 時間制御
         /// </summary>
-        int countMaxStep = 10;
-        /// <summary>
-        /// 増やし過ぎると処理時間が追いつかなくなる？
-        /// </summary>
-        const int COUNT_MAX_LIMIT = 10000;
+        TimeManager timeManager;
 
         /// <summary>
         /// 加工前のビットマップ
@@ -62,7 +58,7 @@ namespace WaraDot.Algorithm
         int done;
 
         static DotBlackize instance;
-        public static DotBlackize Instance(Form1 form1)
+        public static IAlgorithm Instance(Form1 form1)
         {
             if (null == instance)
             {
@@ -74,59 +70,55 @@ namespace WaraDot.Algorithm
         DotBlackize(Form1 form1)
         {
             form1_cache = form1;
+            timeManager = new TimeManager();
             markboard = new Markboard();
+            textLikeCursorIteration = new TextLikeCursorIteration();
         }
         public void Clear()
         {
+            timeManager.Clear();
             markboard.Clear();
             beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
             done = 0;
         }
         public void Init()
         {
+            Clear();
             markboard.Init();
-            // スタート地点
-            currentPoint = new Point(Program.selectionImg.X, Program.selectionImg.Y);
+            textLikeCursorIteration.Init();
         }
 
         public bool IsFinished()
         {
-            return currentPoint.X  == Program.config.width &&
-                currentPoint.Y == Program.config.height;
+            return textLikeCursorIteration.IsFinished();
         }
 
-        public void Step()
+        public void Tick()
         {
             if (IsFinished())
             {
                 return;
             }
 
-            Trace.WriteLine("cur(" + currentPoint.X + ", " + currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
+            Trace.WriteLine("cur(" + textLikeCursorIteration.currentPoint.X + ", " + textLikeCursorIteration.currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
 
-            for (int i = 0; i < countMax; i++)
+            timeManager.BeginIteration();
+            while (timeManager.Iterate())
             {
                 if (!IsFinished())
                 {
                     DrawAndSearch();
                 }
             }
+            timeManager.EndIteration();
 
-            if (countMax < COUNT_MAX_LIMIT)
-            {
-                countMax += countMaxStep;
-                countMaxStep++;
-                if (COUNT_MAX_LIMIT < countMax)
-                {
-                    countMax = COUNT_MAX_LIMIT;
-                }
-            }
+            timeManager.IncleaseCapacity();
         }
 
         void DrawWhiteout(int value)
         {
             // 指定した地点の色
-            Color color2 = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
 
             //int next = color2.R + 2*value;//ホワイトアウトの方が強く。
             int next = color2.R + value;
@@ -135,14 +127,14 @@ namespace WaraDot.Algorithm
                 // 完全白は消します
                 form1_cache.Color = Color.Transparent;
                 bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
                 if (drawed) { done++; };
             }
             else
             {
                 form1_cache.Color = Color.FromArgb(next, next, next);
                 bool drawed = false;
-                form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
                 if (drawed) { done++; };
             }
         }
@@ -155,7 +147,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
 
             if (255!=color2.A)
             {
@@ -166,39 +158,35 @@ namespace WaraDot.Algorithm
             // 指定した地点の四方の色
             Color north = Color.Transparent;
             {
-                currentPoint.Y--;
-                if (-1 < currentPoint.Y)
+                if (textLikeCursorIteration.GoToNorth())
                 {
-                    north = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    north = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.Y++;
+                textLikeCursorIteration.BackFromNorth();
             }
             Color east = Color.Transparent;
             {
-                currentPoint.X++;
-                if (currentPoint.X < Program.config.width)
+                if (textLikeCursorIteration.GoToEast())
                 {
-                    east = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    east = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.X--;
+                textLikeCursorIteration.BackFromEast();
             }
             Color south = Color.Transparent;
             {
-                currentPoint.Y++;
-                if (currentPoint.Y < Program.config.height)
+                if (textLikeCursorIteration.GoToSouth())
                 {
-                    south = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    south = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.Y--;
+                textLikeCursorIteration.BackFromSouth();
             }
             Color west = Color.Transparent;
             {
-                currentPoint.X--;
-                if (-1 < currentPoint.X)
+                if (textLikeCursorIteration.GoToWest())
                 {
-                    west = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    west = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.X++;
+                textLikeCursorIteration.BackFromWest();
             }
 
             // 隣接する透明色の数
@@ -235,7 +223,7 @@ namespace WaraDot.Algorithm
             {
                 //Trace.WriteLine("ブラッカイズ！");
 
-                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
                 {
                     // 現在地点を、より白に近づけます
                     DrawWhiteout(multiplier * blackerCount);
@@ -245,69 +233,77 @@ namespace WaraDot.Algorithm
                 // 周囲を黒に近づけます
                 if (north.A == 255 && north.R < color2.R)
                 {
-                    currentPoint.Y--;
-                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    if (textLikeCursorIteration.GoToNorth())
                     {
-                        int next = north.R + multiplier * 1;
-                        if (255 < next) { next = 255; }
-                        form1_cache.Color = Color.FromArgb(next, next, next);
-                        bool drawed = false;
-                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                        if (drawed) { done++; };
-                        currentPoint.Y++;
+                        if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
+                        {
+                            int next = north.R + multiplier * 1;
+                            if (255 < next) { next = 255; }
+                            form1_cache.Color = Color.FromArgb(next, next, next);
+                            bool drawed = false;
+                            form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
+                            if (drawed) { done++; };
+                        }
                     }
+                    textLikeCursorIteration.BackFromNorth();
                 }
 
                 if (east.A == 255 && east.R < color2.R)
                 {
-                    currentPoint.X++;
-                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    if (textLikeCursorIteration.GoToEast())
                     {
-                        int next = east.R + multiplier * 1;
-                        if (255 < next) { next = 255; }
-                        form1_cache.Color = Color.FromArgb(next, next, next);
-                        bool drawed = false;
-                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                        if (drawed) { done++; };
-                        currentPoint.X--;
+                        if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
+                        {
+                            int next = east.R + multiplier * 1;
+                            if (255 < next) { next = 255; }
+                            form1_cache.Color = Color.FromArgb(next, next, next);
+                            bool drawed = false;
+                            form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
+                            if (drawed) { done++; };
+                        }
                     }
+                    textLikeCursorIteration.BackFromEast();
                 }
 
                 if (south.A == 255 && south.R < color2.R)
                 {
-                    currentPoint.Y++;
-                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    if (textLikeCursorIteration.GoToSouth())
                     {
-                        int next = south.R + multiplier * 1;
-                        if (255 < next) { next = 255; }
-                        form1_cache.Color = Color.FromArgb(next, next, next);
-                        bool drawed = false;
-                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                        if (drawed) { done++; };
-                        currentPoint.Y--;
+                        if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
+                        {
+                            int next = south.R + multiplier * 1;
+                            if (255 < next) { next = 255; }
+                            form1_cache.Color = Color.FromArgb(next, next, next);
+                            bool drawed = false;
+                            form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
+                            if (drawed) { done++; };
+                        }
                     }
+                    textLikeCursorIteration.BackFromSouth();
                 }
 
                 if (west.A == 255 && west.R < color2.R)
                 {
-                    currentPoint.X--;
-                    if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                    if (textLikeCursorIteration.GoToWest())
                     {
-                        int next = west.R + multiplier * 1;
-                        if (255 < next) { next = 255; }
-                        form1_cache.Color = Color.FromArgb(next, next, next);
-                        bool drawed = false;
-                        form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
-                        if (drawed) { done++; };
-                        currentPoint.X++;
+                        if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
+                        {
+                            int next = west.R + multiplier * 1;
+                            if (255 < next) { next = 255; }
+                            form1_cache.Color = Color.FromArgb(next, next, next);
+                            bool drawed = false;
+                            form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
+                            if (drawed) { done++; };
+                        }
                     }
+                    textLikeCursorIteration.BackFromWest();
                 }
                 //*/
             }
             // 透明の数が３、（自分より黒いセルの数が０、または同色のセルの数が１）　なら、自分がはみ出た色と判定
             else if (transparentCount==3 && (blackerCount==0||sameColorCount==1))
             {
-                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
                 {
                     // 現在地点を、より白に近づけます
                     DrawWhiteout(multiplier * transparentCount);
@@ -316,40 +312,8 @@ namespace WaraDot.Algorithm
 
             gt_Next:
             // 次の地点
-            if (currentPoint.X + 1 < Program.selectionImg.X + Program.selectionImg.Width)// Program.config.width
-            {
-                currentPoint.X++;
-            }
-            else if (currentPoint.Y + 1 < Program.selectionImg.Y + Program.selectionImg.Height)// Program.config.height
-            {
-                currentPoint.X = Program.selectionImg.X;// 0;
-                currentPoint.Y++;
-            }
-            else
-            {
-                // 終了
-                currentPoint.X = Program.config.width;
-                currentPoint.Y = Program.config.height;
-            }
-/*
-            // 次の地点
-            if (currentPoint.X + 1 != Program.config.width)
-            {
-                currentPoint.X++;
-            }
-            else if (currentPoint.Y + 1 != Program.config.height)
-            {
-                currentPoint.X=0;
-                currentPoint.Y++;
-            }
-            else
-            {
-                // 終了
-                currentPoint.X = Program.config.width;
-                currentPoint.Y = Program.config.height;
-            }
-*/
-            form1_cache.SyncPos(currentPoint);
+            textLikeCursorIteration.GoToNext();
+            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
         }
 
     }

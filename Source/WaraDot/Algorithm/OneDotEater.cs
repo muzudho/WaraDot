@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using WaraDot.Algorithm.Sub;
 
 namespace WaraDot.Algorithm
 {
@@ -26,7 +27,10 @@ namespace WaraDot.Algorithm
         /// </summary>
         Markboard markboard;
 
-        Point currentPoint;
+        /// <summary>
+        /// 選択範囲の左上隅から右端へ、改行して左端から右端へ、といった順でカーソル移動
+        /// </summary>
+        TextLikeCursorIteration textLikeCursorIteration;
 
         /// <summary>
         /// 見てると飽きてくるんで、だんだん増やしていく。
@@ -44,7 +48,7 @@ namespace WaraDot.Algorithm
         int done;
 
         static OneDotEater instance;
-        public static OneDotEater Instance(Form1 form1)
+        public static IAlgorithm Instance(Form1 form1)
         {
             if (null == instance)
             {
@@ -56,6 +60,7 @@ namespace WaraDot.Algorithm
         {
             form1_cache = form1;
             markboard = new Markboard();
+            textLikeCursorIteration = new TextLikeCursorIteration();
         }
         public void Clear()
         {
@@ -64,26 +69,25 @@ namespace WaraDot.Algorithm
         }
         public void Init()
         {
+            Clear();
             markboard.Init();
-            // スタート地点
-            currentPoint = new Point(Program.selectionImg.X, Program.selectionImg.Y);
-            form1_cache.SyncPos(currentPoint);
+            textLikeCursorIteration.Init();
+            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
         }
 
         public bool IsFinished()
         {
-            return currentPoint.X  == Program.config.width &&
-                currentPoint.Y == Program.config.height;
+            return textLikeCursorIteration.IsFinished();
         }
 
-        public void Step()
+        public void Tick()
         {
             if (IsFinished())
             {
                 return;
             }
 
-            Trace.WriteLine("cur(" + currentPoint.X + ", " + currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
+            Trace.WriteLine("cur(" + textLikeCursorIteration.currentPoint.X + ", " + textLikeCursorIteration.currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
 
             for (int i = 0; i < countMax; i++)
             {
@@ -112,44 +116,40 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = Program.config.LookingLayerBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
 
             // 指定した地点の四方の色
             Color north = Color.Transparent;
             {
-                currentPoint.Y--;
-                if (-1 < currentPoint.Y)
+                if (textLikeCursorIteration.GoToNorth())
                 {
-                    north = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    north = Program.config.LookingLayerBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.Y++;
+                textLikeCursorIteration.BackFromNorth();
             }
             Color east = Color.Transparent;
             {
-                currentPoint.X++;
-                if (currentPoint.X < Program.config.width)
+                if (textLikeCursorIteration.GoToEast())
                 {
-                    east = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    east = Program.config.LookingLayerBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.X--;
+                textLikeCursorIteration.BackFromEast();
             }
             Color south = Color.Transparent;
             {
-                currentPoint.Y++;
-                if (currentPoint.Y < Program.config.height)
+                if (textLikeCursorIteration.GoToSouth())
                 {
-                    south = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    south = Program.config.LookingLayerBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.Y--;
+                textLikeCursorIteration.BackFromSouth();
             }
             Color west = Color.Transparent;
             {
-                currentPoint.X--;
-                if (-1 < currentPoint.X)
+                if (textLikeCursorIteration.GoToWest())
                 {
-                    west = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    west = Program.config.LookingLayerBitmap.GetPixel(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y);
                 }
-                currentPoint.X++;
+                textLikeCursorIteration.BackFromEast();
             }
 
             Color aroundColor = Color.Transparent;
@@ -172,55 +172,23 @@ namespace WaraDot.Algorithm
                 aroundColor != color2
                 )
             {
-                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                if (markboard.Editable(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y))
                 {
                     Trace.WriteLine("イート！");
 
                     // 指定の地点を、周りの色で塗ります
                     form1_cache.Color = aroundColor;
                     bool drawed = false;
-                    form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);
+                    form1_cache.DrawDotByImage(textLikeCursorIteration.currentPoint.X, textLikeCursorIteration.currentPoint.Y, ref drawed);
                     if (drawed) { done++; }
                 }
 
             }
 
             // 次の地点
-            if (currentPoint.X + 1 < Program.selectionImg.X + Program.selectionImg.Width)// Program.config.width
-            {
-                currentPoint.X++;
-            }
-            else if (currentPoint.Y + 1 < Program.selectionImg.Y + Program.selectionImg.Height)// Program.config.height
-            {
-                currentPoint.X = Program.selectionImg.X;// 0;
-                currentPoint.Y++;
-            }
-            else
-            {
-                // 終了
-                currentPoint.X = Program.config.width;
-                currentPoint.Y = Program.config.height;
-            }
+            textLikeCursorIteration.GoToNext();
 
-            /*
-            // 次の地点
-            if (currentPoint.X + 1 != Program.config.width)
-            {
-                currentPoint.X++;
-            }
-            else if (currentPoint.Y + 1 != Program.config.height)
-            {
-                currentPoint.X = 0;
-                currentPoint.Y++;
-            }
-            else
-            {
-                // 終了
-                currentPoint.X = Program.config.width;
-                currentPoint.Y = Program.config.height;
-            }
-            */
-            form1_cache.SyncPos(currentPoint);
+            form1_cache.SyncPos(textLikeCursorIteration.currentPoint);
         }
 
     }

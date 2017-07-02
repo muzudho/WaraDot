@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
-namespace WaraDot.Algorithm
+namespace WaraDot.Algorithm.Sub
 {
     /// <summary>
     /// フラグが立っているところは編集しない
@@ -35,6 +36,7 @@ namespace WaraDot.Algorithm
         }
         public void Init()
         {
+            Clear();
             // 選択範囲の外は編集しないようにする
             for (int y = 0; y < Program.config.height; y++)
             {
@@ -57,6 +59,10 @@ namespace WaraDot.Algorithm
         {
             markboard[x, y] = true;
         }
+        public void Mark(Point pt)
+        {
+            Mark(pt.X, pt.Y);
+        }
 
         /// <summary>
         /// 編集可能
@@ -67,6 +73,15 @@ namespace WaraDot.Algorithm
         public bool Editable(int x, int y)
         {
             return !markboard[x, y];
+        }
+        /// <summary>
+        /// 編集可能
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <returns></returns>
+        public bool Editable(Point pt)
+        {
+            return Editable(pt.X, pt.Y);
         }
     }
 }

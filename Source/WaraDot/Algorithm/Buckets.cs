@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using WaraDot.Algorithm.Sub;
 
 namespace WaraDot.Algorithm
 {
@@ -25,24 +26,23 @@ namespace WaraDot.Algorithm
         /// </summary>
         Markboard markboard;
 
-        List<Point> currentPoints;
-        List<Point> nextPoints;
         /// <summary>
-        /// １回のステップで描く上限
-        /// 長々と見てると飽きてくるんで、だんだん増やしてスピードアップさせる
+        /// バケツ（塗りつぶし）のようなカーソル移動
         /// </summary>
-        int countMax = 100;
+        BucketsLikeCursorIteration bucketsLikeCursorIteration;
+
         /// <summary>
-        /// 増分。こいつも増やしていく。
+        /// 時間制御
         /// </summary>
-        int countMaxStep = 10;
+        TimeManager timeManager;
+
         /// <summary>
-        /// 増やし過ぎると処理時間が追いつかなくなる？
+        /// 加工した数
         /// </summary>
-        const int COUNT_MAX_LIMIT = 10000;
+        int done;
 
         static Buckets instance;
-        public static Buckets Instance(Form1 form1)
+        public static IAlgorithm Instance(Form1 form1)
         {
             if (null== instance)
             {
@@ -54,69 +54,53 @@ namespace WaraDot.Algorithm
         {
             form1_cache = form1;
             markboard = new Markboard();
-            currentPoints = new List<Point>();
-            nextPoints = new List<Point>();
+            bucketsLikeCursorIteration = new BucketsLikeCursorIteration(form1);
+            timeManager = new TimeManager();
         }
         public void Clear()
         {
-            nextPoints.Clear();
+            timeManager.Clear();
+            bucketsLikeCursorIteration.Clear();
             markboard.Clear();
         }
-        public void Init(int mouseX, int mouseY)
+        public void Init()
         {
+            Clear();
             markboard.Init();
-
-            // スタート地点
-            Point imgPt = form1_cache.ToImage(mouseX, mouseY);
-            nextPoints.Add(imgPt);
+            bucketsLikeCursorIteration.Init(form1_cache.ToImage(form1_cache.CursorRect.X, form1_cache.CursorRect.Y));
 
             // マウス押下した地点の色
-            color_cache = Program.config.LookingLayerBitmap.GetPixel(imgPt.X, imgPt.Y);
+            color_cache = Program.config.LookingLayerBitmap.GetPixel(bucketsLikeCursorIteration.nextPoints[0].X, bucketsLikeCursorIteration.nextPoints[0].Y);
         }
 
 
         public bool IsFinished()
         {
-            return nextPoints.Count < 1;
+            return bucketsLikeCursorIteration.IsFinished();
         }
 
-        public void Step()
+        public void Tick()
         {
             if (IsFinished())
             {
                 return;
             }
 
-            currentPoints.Clear();
-            currentPoints.AddRange(nextPoints);
-            nextPoints.Clear();
-            int iPt = 0;
-            for (; iPt< currentPoints.Count; iPt++)
+            bucketsLikeCursorIteration.BeginIteration();
+            while (bucketsLikeCursorIteration.Iterate())
             {
-                if(nextPoints.Count < countMax)
+                if(bucketsLikeCursorIteration.NextPointsCount < timeManager.countMax)
                 {
-                    DrawAndSearch(currentPoints[iPt].X, currentPoints[iPt].Y);
+                    DrawAndSearch();
                 }
                 else
                 {
                     break;
                 }
             }
-            // 残った分は次の機会に
-            for (; iPt < currentPoints.Count; iPt++)
-            {
-                nextPoints.Add(currentPoints[iPt]);
-            }
+            bucketsLikeCursorIteration.EndIteration();
 
-            if (countMax < COUNT_MAX_LIMIT)
-            {
-                countMax += countMaxStep;
-                countMaxStep++;
-                if (COUNT_MAX_LIMIT<countMax)
-                {
-                    countMax = COUNT_MAX_LIMIT;
-                }
-            }
+            timeManager.IncleaseCapacity();
         }
 
         /// <summary>
@@ -124,58 +108,47 @@ namespace WaraDot.Algorithm
         /// </summary>
         /// <param name="imgX"></param>
         /// <param name="imgY"></param>
-        void DrawAndSearch(int imgX, int imgY)
+        void DrawAndSearch()
         {
             // 指定の升はとりあえずマークする
-            markboard.Mark(imgX, imgY);
+            markboard.Mark(bucketsLikeCursorIteration.CurrentPoint);
 
             // 指定した地点の色
-            Color color2 = Program.config.LookingLayerBitmap.GetPixel(imgX, imgY);
+            Color color2 = Program.config.GetLookingLayerPixel(bucketsLikeCursorIteration.CurrentPoint);
 
             if (color2.Equals( color_cache))//一致した場合
             {
                 // 指定の地点をまず描画
                 bool drawed = false;
-                form1_cache.DrawDotByImage(imgX, imgY, ref drawed);
-
+                form1_cache.DrawDotByImage( bucketsLikeCursorIteration.CurrentPoint, ref drawed);
                 if (drawed)
                 {
-                    //*
+                    done++;
+
                     // 上
-                    imgY--;
-                    if (-1< imgY && markboard.Editable(imgX, imgY))
+                    if (bucketsLikeCursorIteration.GoToNorth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
                     {
-                        nextPoints.Add( new Point(imgX, imgY));
+                        bucketsLikeCursorIteration.MarkNextPoint();
                     }
-                    imgY++;
-                    //*/
-                    //*
+                    bucketsLikeCursorIteration.BackFromNorth();
                     // 右
-                    imgX++;
-                    if (imgX  < Program.config.width && markboard.Editable(imgX, imgY))
+                    if (bucketsLikeCursorIteration.GoToEast() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
                     {
-                        nextPoints.Add(new Point(imgX, imgY));
+                        bucketsLikeCursorIteration.MarkNextPoint();
                     }
-                    imgX--;
-                    //*/
-                    //*
+                    bucketsLikeCursorIteration.BackFromEast();
                     // 下
-                    imgY++;
-                    if (imgY  < Program.config.height && markboard.Editable(imgX, imgY))
+                    if (bucketsLikeCursorIteration.GoToSouth() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
                     {
-                        nextPoints.Add(new Point(imgX, imgY));
+                        bucketsLikeCursorIteration.MarkNextPoint();
                     }
-                    imgY--;
-                    //*/
-                    //*
+                    bucketsLikeCursorIteration.BackFromSouth();
                     // 左
-                    imgX--;
-                    if (-1 < imgX && markboard.Editable(imgX, imgY))
+                    if (bucketsLikeCursorIteration.GoToWest() && markboard.Editable(bucketsLikeCursorIteration.CurrentPoint))
                     {
-                        nextPoints.Add(new Point(imgX, imgY));
+                        bucketsLikeCursorIteration.MarkNextPoint();
                     }
-                    imgX++;
-                    //*/
+                    bucketsLikeCursorIteration.BackFromWest();
                 }
             }
 

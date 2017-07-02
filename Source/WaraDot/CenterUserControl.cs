@@ -58,7 +58,7 @@ namespace WaraDot
         /// <summary>
         /// ペンが指しているピクセル
         /// </summary>
-        Rectangle cursorRect;
+        public Rectangle cursorRect;
         public void SyncPos(int imgX, int imgY)
         {
             Point windowPt = ToWindow(imgX, imgY);
@@ -466,9 +466,15 @@ namespace WaraDot
                     }
                 }
 
+                //────────────────────────────────────────
+                // 描画位置
+                //────────────────────────────────────────
                 // 指しているピクセルを枠で囲む。等倍のとき邪魔だが……☆（＾～＾）
                 g.DrawRectangle(cursorPen, cursorRect);
 
+                //────────────────────────────────────────
+                // 選択範囲
+                //────────────────────────────────────────
                 if (Rectangle.Empty != Program.selectionImg)
                 {
                     // 選択範囲を描画する
@@ -490,10 +496,8 @@ namespace WaraDot
                         case Tools.Buckets:
                             {
                                 // 塗りつぶしたい
-                                Buckets buckets = Buckets.Instance(form1);
-                                Program.currentAlgorithm = buckets;
-                                buckets.Clear();
-                                buckets.Init(e.X, e.Y);
+                                Program.currentAlgorithm = Buckets.Instance(form1);
+                                Program.currentAlgorithm.Init();
                                 form1.OperatorType = OperatorType.Computer;
                             }
                             break;

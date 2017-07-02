@@ -167,6 +167,10 @@ namespace WaraDot
         /// アルゴリズムが見る元のレイヤー
         /// </summary>
         public Bitmap LookingLayerBitmap { get { return layersBitmap[lookingLayer]; } }
+        public Color GetLookingLayerPixel(Point pt)
+        {
+            return LookingLayerBitmap.GetPixel(pt.X, pt.Y);
+        }
         /// <summary>
         /// ドローイング・ツール、または  アルゴリズムが描く先のレイヤー
         /// </summary>

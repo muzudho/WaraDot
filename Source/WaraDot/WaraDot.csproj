@@ -74,9 +74,12 @@
   <ItemGroup>
     <Compile Include="Algorithm\Buckets.cs" />
     <Compile Include="Algorithm\EraseAll.cs" />
-    <Compile Include="Algorithm\IAlgorithm.cs" />
+    <Compile Include="Algorithm\Sub\BucketsLikeCursorIteration.cs" />
+    <Compile Include="Algorithm\Sub\IAlgorithm.cs" />
     <Compile Include="Algorithm\NoiseCanceler.cs" />
-    <Compile Include="Algorithm\Markboard.cs" />
+    <Compile Include="Algorithm\Sub\Markboard.cs" />
+    <Compile Include="Algorithm\Sub\TextLikeCursorIteration.cs" />
+    <Compile Include="Algorithm\Sub\TimeManager.cs" />
     <Compile Include="CenterUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

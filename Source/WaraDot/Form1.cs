@@ -175,6 +175,10 @@ namespace WaraDot
         {
             centerControl1.DrawDotByImage(imgX, imgY, this, ref drawed);
         }
+        public void DrawDotByImage(Point pt, ref bool drawed)
+        {
+            DrawDotByImage(pt.X, pt.Y, ref drawed);
+        }
         #endregion
 
         #region コンピューターの自動実行
@@ -191,7 +195,7 @@ namespace WaraDot
                 }
                 else
                 {
-                    Program.currentAlgorithm.Step();
+                    Program.currentAlgorithm.Tick();
                     RefreshCanvas();
                 }
             }
@@ -203,6 +207,17 @@ namespace WaraDot
             centerControl1.SyncPos(imgPt.X, imgPt.Y);
         }
 
+        /// <summary>
+        /// ペン先の位置
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle CursorRect
+        {
+            get
+            {
+                return centerControl1.cursorRect;
+            }
+        }
 
         /// <summary>
         /// [アルゴリズム] - [1ドットイーター]
@@ -212,10 +227,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void Algorithm1DotEaterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OneDotEater instance = OneDotEater.Instance(this);
-            Program.currentAlgorithm = instance;
-            instance.Clear();
-            instance.Init();
+            Program.currentAlgorithm = OneDotEater.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -226,10 +239,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmBlackizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DotBlackize instance = DotBlackize.Instance(this);
-            Program.currentAlgorithm = instance;
-            instance.Clear();
-            instance.Init();
+            Program.currentAlgorithm = DotBlackize.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -240,10 +251,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmDotAverageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DotAverage instance = DotAverage.Instance(this);
-            instance.Clear();
-            instance.Init();
-            Program.currentAlgorithm = instance;
+            Program.currentAlgorithm = DotAverage.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -254,10 +263,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void DotTransparentClearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DotTransparentClear instance = DotTransparentClear.Instance(this);
-            Program.currentAlgorithm = instance;
-            instance.Clear();
-            instance.Init();
+            Program.currentAlgorithm = DotTransparentClear.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -298,10 +305,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmNoiseCancelerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NoiseCanceler instance = NoiseCanceler.Instance(this);
-            Program.currentAlgorithm = instance;
-            instance.Clear();
-            instance.Init();
+            Program.currentAlgorithm = NoiseCanceler.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -312,10 +317,8 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmEraseAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EraseAll instance = EraseAll.Instance(this);
-            Program.currentAlgorithm = instance;
-            instance.Clear();
-            instance.Init();
+            Program.currentAlgorithm = EraseAll.Instance(this);
+            Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
         }
     }
