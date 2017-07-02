@@ -68,7 +68,7 @@ namespace WaraDot.Algorithm
             bucketslike = new BucketsLikeCursorIteration(form1);
             selection = new List<Point>();
         }
-        public void Clear()
+        public void Init()
         {
             // 加工前のビットマップを置いておき、これを元データとして見にいく
             Program.config.layerOperation.MemoryLayer();
@@ -77,13 +77,8 @@ namespace WaraDot.Algorithm
             form1_cache.SyncDone(done);
 
             timeManager.Clear();
-            markboard.Clear();
-            bucketslike.Clear();
             selection.Clear();
-        }
-        public void Init()
-        {
-            Clear();
+
             markboard.Init();
             // テキスト読みの開始位置
             textlike.Init();
@@ -91,6 +86,13 @@ namespace WaraDot.Algorithm
             // バケツ読みの開始位置
             bucketslike.Init(textlike.cursor);
             startColor = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textlike.cursor);
+        }
+        /// <summary>
+        /// 中断
+        /// </summary>
+        public void Stop()
+        {
+
         }
 
         public bool IsFinished()
@@ -114,13 +116,20 @@ namespace WaraDot.Algorithm
                 goto gt_nextText;
             }
 
+            bool notNoise = false;
+
             // バケツスキャン
             bucketslike.BeginIteration();
             while (bucketslike.Iterate())
             {
                 if (bucketslike.NextPointsCount < timeManager.countMax)
                 {
-                    DrawAndSearch();
+                    if (!DrawAndSearch())
+                    {
+                        // 似ていない色と隣接していた場合
+                        notNoise = true;
+                        break;
+                    }
                 }
                 else
                 {
@@ -129,8 +138,14 @@ namespace WaraDot.Algorithm
             }
             bucketslike.EndIteration();
 
+            if (notNoise)
+            {
+                // ノイズではないので、バケツスキャンを中断したとき
+                Trace.WriteLine("selection.Count=" + selection.Count + " ノイズではない");
 
-            if (!bucketslike.HasNextPoints())
+                nextText = true;
+            }
+            else if (!bucketslike.HasNextPoints())
             {
                 // バケツスキャンが終わった時
                 if (1< selection.Count && selection.Count< 13)
@@ -188,13 +203,19 @@ namespace WaraDot.Algorithm
         /// </summary>
         /// <param name="imgX"></param>
         /// <param name="imgY"></param>
-        void DrawAndSearch()
+        bool DrawAndSearch()
         {
 
             // 指定した地点の色
             Color color2 = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(bucketslike.Cursor);
 
-            if (ColorUtility.IsSimilarColor( startColor, color2 ))
+            if (Color.Transparent== color2)
+            {
+                // 透明色は無視
+                // とりあえずマークする
+                markboard.Mark(bucketslike.Cursor);
+            }
+            else if (ColorUtility.IsSimilarColor( startColor, color2 ))
             {
                 // 指定の色と似ている色の升
                 // 選択対象
@@ -227,6 +248,14 @@ namespace WaraDot.Algorithm
                 }
                 bucketslike.BackFromWest();
             }
+            else
+            {
+                // 似ていない色と隣接していた場合、ノイズとは考えない。
+                // アンチエイリアシングかもしれない。
+                return false;
+            }
+
+            return true;
         }
 
     }

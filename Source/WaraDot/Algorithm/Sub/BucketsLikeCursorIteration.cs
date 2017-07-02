@@ -20,18 +20,17 @@ namespace WaraDot.Algorithm.Sub
             nextPoints = new List<Point>();
         }
         Form1 form1_cache;
+
+
         public List<Point> currentPoints;
         public List<Point> nextPoints;
-
-        public void Clear()
+        public int currentElementIndex;
+        public void Init(Point startImg)
         {
             currentPoints.Clear();//追加
             nextPoints.Clear();
-            currentElementIndex = - 1;
-        }
-        public void Init(Point startImg) // Point startImg = form1_cache.ToImage(form1_cache.CursorRect.X, form1_cache.CursorRect.Y);
-        {
-            Clear();
+            currentElementIndex = -1;
+
             // スタート地点            
             nextPoints.Add(new Point(startImg.X, startImg.Y));
         }
@@ -70,7 +69,6 @@ namespace WaraDot.Algorithm.Sub
             }
         }
 
-        public int currentElementIndex;
         public bool Iterate()
         {
             currentElementIndex++;

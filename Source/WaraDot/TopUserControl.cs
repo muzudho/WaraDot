@@ -19,7 +19,12 @@ namespace WaraDot
             switch (toolComboBox.SelectedIndex)
             {
                 case 1: tools = Tools.Buckets; break;
-                case 2: tools = Tools.Eraser; break;
+                case 2:
+                    {
+                        tools = Tools.Eraser;
+                        ((Form1)ParentForm).DrawingColor = Color.Transparent;
+                    }
+                    break;
                 case 3: tools = Tools.Selection; break;
                 default://thru
                 case 0: tools = Tools.FreeHandLine; break;

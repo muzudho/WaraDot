@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using WaraDot.Algorithm;
+using System.Diagnostics;
 
 namespace WaraDot
 {
@@ -195,7 +196,14 @@ namespace WaraDot
             // 現在使用中のアルゴリズム
             if (null != Program.currentAlgorithm)
             {
-                if (Program.currentAlgorithm.IsFinished())
+                if (Program.isCancelAlgorithm)
+                {
+                    Trace.WriteLine("中断を呼び出し");
+                    Program.currentAlgorithm.Stop();
+                    Program.currentAlgorithm = null;
+                    Program.isCancelAlgorithm = false;
+                }
+                else if (Program.currentAlgorithm.IsFinished())
                 {
                     Program.currentAlgorithm = null;
                     OperatorType = OperatorType.Human;
@@ -375,6 +383,17 @@ namespace WaraDot
         public void SyncDone(int done)
         {
             topUserControl1.SyncDone(done);
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [中断]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgorithmBreakToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Trace.WriteLine("中断を要求");
+            Program.isCancelAlgorithm = true;
         }
     }
 }

@@ -47,6 +47,7 @@
             this.作り直し操作ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RemakeNoiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RemakeWhitePaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlgorithmBreakToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -99,6 +100,7 @@
             // アルゴリズムToolStripMenuItem
             // 
             this.アルゴリズムToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AlgorithmBreakToolStripMenuItem,
             this.ドットイーターToolStripMenuItem,
             this.ブラッカイズToolStripMenuItem,
             this.ドットアベレージToolStripMenuItem,
@@ -197,6 +199,13 @@
             this.RemakeWhitePaperToolStripMenuItem.Text = "白紙";
             this.RemakeWhitePaperToolStripMenuItem.Click += new System.EventHandler(this.RemakeWhitePaperToolStripMenuItem_Click);
             // 
+            // AlgorithmBreakToolStripMenuItem
+            // 
+            this.AlgorithmBreakToolStripMenuItem.Name = "AlgorithmBreakToolStripMenuItem";
+            this.AlgorithmBreakToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.AlgorithmBreakToolStripMenuItem.Text = "（中断）";
+            this.AlgorithmBreakToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmBreakToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -240,6 +249,7 @@
         private System.Windows.Forms.ToolStripMenuItem 作り直し操作ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem RemakeNoiseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem RemakeWhitePaperToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AlgorithmBreakToolStripMenuItem;
     }
 }
 

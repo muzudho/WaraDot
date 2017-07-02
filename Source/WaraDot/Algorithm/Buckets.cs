@@ -19,27 +19,6 @@ namespace WaraDot.Algorithm
         public string Name { get { return "Buckets"; } }
 
         Form1 form1_cache;
-        Color color_cache;
-
-        /// <summary>
-        /// フラグが立っているところは編集しない
-        /// </summary>
-        Markboard markboard;
-
-        /// <summary>
-        /// バケツ（塗りつぶし）のようなカーソル移動
-        /// </summary>
-        BucketsLikeCursorIteration bucketsLikeCursorIteration;
-
-        /// <summary>
-        /// 時間制御
-        /// </summary>
-        TimeManager timeManager;
-
-        /// <summary>
-        /// 加工した数
-        /// </summary>
-        int done;
 
         static Buckets instance;
         public static IAlgorithm Instance(Form1 form1)
@@ -57,22 +36,51 @@ namespace WaraDot.Algorithm
             bucketsLikeCursorIteration = new BucketsLikeCursorIteration(form1);
             timeManager = new TimeManager();
         }
-        public void Clear()
-        {
-            timeManager.Clear();
-            bucketsLikeCursorIteration.Clear();
-            markboard.Clear();
-            done = 0;
-            form1_cache.SyncDone(done);
-        }
+
+
+        /// <summary>
+        /// バケツ（塗りつぶし）のようなカーソル移動
+        /// </summary>
+        BucketsLikeCursorIteration bucketsLikeCursorIteration;
+
+        Color color_cache;
+
+        /// <summary>
+        /// 加工した数
+        /// </summary>
+        int done;
+
+        /// <summary>
+        /// フラグが立っているところは編集しない
+        /// </summary>
+        Markboard markboard;
+
+        /// <summary>
+        /// 時間制御
+        /// </summary>
+        TimeManager timeManager;
+
         public void Init()
         {
-            Clear();
+            color_cache = Color.Transparent;
+            done = 0; form1_cache.SyncDone(done);
+            timeManager.Clear();
+
+            // 加工前のビットマップを置いておき、これを元データとして見にいく
+            Program.config.layerOperation.MemoryLayer();
+
             markboard.Init();
             bucketsLikeCursorIteration.Init(form1_cache.ToImage(form1_cache.CursorRect.X, form1_cache.CursorRect.Y));
 
             // マウス押下した地点の色
-            color_cache = Program.config.layerOperation.GetLookingLayerPixel(bucketsLikeCursorIteration.nextPoints[0]);
+            color_cache = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(bucketsLikeCursorIteration.nextPoints[0]);
+        }
+        /// <summary>
+        /// 中断
+        /// </summary>
+        public void Stop()
+        {
+
         }
 
 
@@ -116,7 +124,7 @@ namespace WaraDot.Algorithm
             markboard.Mark(bucketsLikeCursorIteration.Cursor);
 
             // 指定した地点の色
-            Color color2 = Program.config.layerOperation.GetLookingLayerPixel(bucketsLikeCursorIteration.Cursor);
+            Color color2 = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(bucketsLikeCursorIteration.Cursor);
 
             if (color2.Equals( color_cache))//一致した場合
             {

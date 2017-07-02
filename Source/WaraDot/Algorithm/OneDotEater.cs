@@ -62,18 +62,21 @@ namespace WaraDot.Algorithm
             markboard = new Markboard();
             textLikeCursorIteration = new TextLikeCursorIteration();
         }
-        public void Clear()
-        {
-            markboard.Clear();
-            done = 0;
-            form1_cache.SyncDone(done);
-        }
         public void Init()
         {
-            Clear();
+            done = 0;
+            form1_cache.SyncDone(done);
+
             markboard.Init();
             textLikeCursorIteration.Init();
             form1_cache.SyncPos(textLikeCursorIteration.cursor);
+        }
+        /// <summary>
+        /// 中断
+        /// </summary>
+        public void Stop()
+        {
+
         }
 
         public bool IsFinished()

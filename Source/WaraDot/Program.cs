@@ -63,9 +63,10 @@ namespace WaraDot
         /// 現在実行中のアルゴリズム
         /// </summary>
         public static IAlgorithm currentAlgorithm;
-        ///// <summary>
-        ///// アルゴリズム一覧
-        ///// </summary>
-        //public static Dictionary<string,IAlgorithm> algorithms;
+
+        /// <summary>
+        /// アルゴリズムをキャンセルするフラグ
+        /// </summary>
+        public static bool isCancelAlgorithm;
     }
 }

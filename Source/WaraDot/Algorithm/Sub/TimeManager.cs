@@ -8,27 +8,6 @@ namespace WaraDot.Algorithm.Sub
 {
     public class TimeManager
     {
-        public void Clear()
-        {
-            current = -1;
-            countMax = 100;
-            countMaxStep = 10;
-            COUNT_MAX_LIMIT = 10000;
-        }
-
-        public void IncleaseCapacity()
-        {
-            if (countMax < COUNT_MAX_LIMIT)
-            {
-                countMax += countMaxStep;
-                countMaxStep++;
-                if (COUNT_MAX_LIMIT < countMax)
-                {
-                    countMax = COUNT_MAX_LIMIT;
-                }
-            }
-        }
-
         public int current;
         /// <summary>
         /// Tick１回で描く上限
@@ -43,6 +22,28 @@ namespace WaraDot.Algorithm.Sub
         /// 増やし過ぎると処理時間が追いつかなくなる？
         /// </summary>
         public int COUNT_MAX_LIMIT = 10000;
+
+        public void Clear()
+        {
+            current = -1;
+            countMax = 100;
+            countMaxStep = 10;
+            COUNT_MAX_LIMIT = 10000;
+        }
+
+
+        public void IncleaseCapacity()
+        {
+            if (countMax < COUNT_MAX_LIMIT)
+            {
+                countMax += countMaxStep;
+                countMaxStep++;
+                if (COUNT_MAX_LIMIT < countMax)
+                {
+                    countMax = COUNT_MAX_LIMIT;
+                }
+            }
+        }
 
         public void BeginIteration()
         {

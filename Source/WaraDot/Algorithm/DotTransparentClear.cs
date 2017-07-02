@@ -58,22 +58,25 @@ namespace WaraDot.Algorithm
             markboard = new Markboard();
             textLikeCursorIteration = new TextLikeCursorIteration();
         }
-        public void Clear()
+        public void Init()
         {
             timeManager.Clear();
-            markboard.Clear();
 
             // 加工前のビットマップを置いておき、これを元データとして見にいく
             Program.config.layerOperation.MemoryLayer();
 
             done = 0;
             form1_cache.SyncDone(done);
-        }
-        public void Init()
-        {
-            Clear();
+
             markboard.Init();
             textLikeCursorIteration.Init();
+        }
+        /// <summary>
+        /// 中断
+        /// </summary>
+        public void Stop()
+        {
+
         }
 
         public bool IsFinished()

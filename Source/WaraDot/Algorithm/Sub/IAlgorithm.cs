@@ -14,10 +14,6 @@ namespace WaraDot.Algorithm.Sub
         string Name { get; }
 
         /// <summary>
-        /// 空っぽにする。Init( )の中でも呼び出されるので、Init( ) をするときは要らない
-        /// </summary>
-        void Clear();
-        /// <summary>
         /// 開始できる状態にする
         /// </summary>
         void Init();
@@ -32,5 +28,10 @@ namespace WaraDot.Algorithm.Sub
         /// タイマーで繰り返し実行される
         /// </summary>
         void Tick();
+
+        /// <summary>
+        /// 中断
+        /// </summary>
+        void Stop();
     }
 }

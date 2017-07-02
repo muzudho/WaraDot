@@ -21,31 +21,15 @@ namespace WaraDot.Algorithm.Sub
         {
             markboard = new bool[Program.config.width, Program.config.height];
         }
-        public void Clear()
-        {
-            for (int y = 0; y < Program.config.height; y++)
-            {
-                for (int x = 0; x < Program.config.width; x++)
-                {
-                    if (!Program.selectionImg.Contains(x, y))
-                    {
-                        markboard[x, y] = false;
-                    }
-                }
-            }
-        }
         public void Init()
         {
-            Clear();
             // 選択範囲の外は編集しないようにする
             for (int y = 0; y < Program.config.height; y++)
             {
                 for (int x = 0; x < Program.config.width; x++)
                 {
-                    if (!Program.selectionImg.Contains(x, y))
-                    {
-                        markboard[x, y] = true;
-                    }
+                    // 選択範囲なら偽、選択範囲外なら真
+                    markboard[x, y] = !Program.selectionImg.Contains(x, y);
                 }
             }
         }
