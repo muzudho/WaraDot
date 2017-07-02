@@ -2,6 +2,8 @@
 using System;
 using System.Windows.Forms;
 using WaraDot.Algorithm;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace WaraDot
 {
@@ -33,6 +35,14 @@ namespace WaraDot
             // 初期化
             lua.LoadCLRPackage();
             #endregion
+
+            selectionImg = Rectangle.Empty;
+
+            currentAlgorithm = null;
+            //algorithms = new Dictionary<string, IAlgorithm>()
+            //{
+            //    //{ "Buckets", Buckets.Build() }
+            //};
         }
         /// <summary>
         /// Luaスクリプト・ファイルを１個しか使わないのなら、インスタンス１つで十分。
@@ -44,30 +54,19 @@ namespace WaraDot
         /// </summary>
         public static Config config;
 
-        /// <summary>
-        /// バケツ
-        /// 未使用時はヌル
-        /// </summary>
-        public static Buckets buckets;
-        /// <summary>
-        /// ワンドット・イーター
-        /// 未使用時はヌル
-        /// </summary>
-        public static OneDotEater oneDotEater;
-        /// <summary>
-        /// ドット・ブラッカイズ
-        /// 未使用時はヌル
-        /// </summary>
-        public static DotBlackize dotBlackize;
-        /// <summary>
-        /// ドット・アベレージ
-        /// 未使用時はヌル
-        /// </summary>
-        public static DotAverage dotAverage;
-        /// <summary>
-        /// 未使用時はヌル
-        /// </summary>
-        public static DotTransparentClear dotTransparentClear;
 
+        /// <summary>
+        /// 選択範囲。無ければエンプティ
+        /// </summary>
+        public static Rectangle selectionImg;
+
+        /// <summary>
+        /// 現在実行中のアルゴリズム
+        /// </summary>
+        public static IAlgorithm currentAlgorithm;
+        ///// <summary>
+        ///// アルゴリズム一覧
+        ///// </summary>
+        //public static Dictionary<string,IAlgorithm> algorithms;
     }
 }

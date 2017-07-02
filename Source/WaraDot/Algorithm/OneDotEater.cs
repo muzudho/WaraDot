@@ -9,8 +9,13 @@ namespace WaraDot.Algorithm
     /// 
     /// 1ドット浮いていれば、周りの色で置換します
     /// </summary>
-    public class OneDotEater
+    public class OneDotEater : IAlgorithm
     {
+        /// <summary>
+        /// アルゴリズム名
+        /// </summary>
+        public string Name { get { return "OneDotEater"; } }
+
         Form1 form1_cache;
 
         /// <summary>
@@ -35,23 +40,31 @@ namespace WaraDot.Algorithm
 
         int done;
 
-        public static OneDotEater Build(Form1 form1)
+        static OneDotEater instance;
+        public static OneDotEater Instance(Form1 form1)
         {
-            OneDotEater obj = new OneDotEater(form1);
-            return obj;
+            if (null == instance)
+            {
+                instance = new OneDotEater(form1);
+            }
+            return instance;
         }
-
         OneDotEater(Form1 form1)
         {
             form1_cache = form1;
-
             markboard = new Markboard();
+        }
+        public void Clear()
+        {
+            markboard.Clear();
+            done = 0;
+        }
+        public void Init()
+        {
             markboard.Init();
             // スタート地点
-            currentPoint = new Point(Common.selectionImg.X, Common.selectionImg.Y);
-
+            currentPoint = new Point(Program.selectionImg.X, Program.selectionImg.Y);
             form1_cache.SyncPos(currentPoint);
-            done = 0;
         }
 
         public bool IsFinished()
@@ -170,13 +183,13 @@ namespace WaraDot.Algorithm
             }
 
             // 次の地点
-            if (currentPoint.X + 1 < Common.selectionImg.X + Common.selectionImg.Width)// Program.config.width
+            if (currentPoint.X + 1 < Program.selectionImg.X + Program.selectionImg.Width)// Program.config.width
             {
                 currentPoint.X++;
             }
-            else if (currentPoint.Y + 1 < Common.selectionImg.Y + Common.selectionImg.Height)// Program.config.height
+            else if (currentPoint.Y + 1 < Program.selectionImg.Y + Program.selectionImg.Height)// Program.config.height
             {
-                currentPoint.X = Common.selectionImg.X;// 0;
+                currentPoint.X = Program.selectionImg.X;// 0;
                 currentPoint.Y++;
             }
             else

@@ -58,8 +58,6 @@ namespace WaraDot
         {
             return string.Format("Work/WaraLayer{0}.png", layer);
         }
-        //public const int LAYER0 = 0;
-        //public const string IMAGE_FILE = "Work/WaraLayer0.png";
 
         public string Dump()
         {

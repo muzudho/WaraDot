@@ -39,9 +39,11 @@
             this.ブラッカイズToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ドットアベレージToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.半透明の透明化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlgorithmNoiseCancelerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.選択範囲ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionCancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlgorithmEraseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -95,7 +97,9 @@
             this.ドットイーターToolStripMenuItem,
             this.ブラッカイズToolStripMenuItem,
             this.ドットアベレージToolStripMenuItem,
-            this.半透明の透明化ToolStripMenuItem});
+            this.半透明の透明化ToolStripMenuItem,
+            this.AlgorithmNoiseCancelerToolStripMenuItem,
+            this.AlgorithmEraseAllToolStripMenuItem});
             this.アルゴリズムToolStripMenuItem.Name = "アルゴリズムToolStripMenuItem";
             this.アルゴリズムToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.アルゴリズムToolStripMenuItem.Text = "アルゴリズム";
@@ -128,6 +132,13 @@
             this.半透明の透明化ToolStripMenuItem.Text = "半透明の透明化";
             this.半透明の透明化ToolStripMenuItem.Click += new System.EventHandler(this.DotTransparentClearToolStripMenuItem_Click);
             // 
+            // AlgorithmNoiseCancelerToolStripMenuItem
+            // 
+            this.AlgorithmNoiseCancelerToolStripMenuItem.Name = "AlgorithmNoiseCancelerToolStripMenuItem";
+            this.AlgorithmNoiseCancelerToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.AlgorithmNoiseCancelerToolStripMenuItem.Text = "ノイズキャンセラー";
+            this.AlgorithmNoiseCancelerToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmNoiseCancelerToolStripMenuItem_Click);
+            // 
             // 選択範囲ToolStripMenuItem
             // 
             this.選択範囲ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -140,16 +151,23 @@
             // SelectionAllToolStripMenuItem
             // 
             this.SelectionAllToolStripMenuItem.Name = "SelectionAllToolStripMenuItem";
-            this.SelectionAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SelectionAllToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.SelectionAllToolStripMenuItem.Text = "全選択";
             this.SelectionAllToolStripMenuItem.Click += new System.EventHandler(this.SelectionAllToolStripMenuItem_Click);
             // 
             // SelectionCancelToolStripMenuItem
             // 
             this.SelectionCancelToolStripMenuItem.Name = "SelectionCancelToolStripMenuItem";
-            this.SelectionCancelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SelectionCancelToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.SelectionCancelToolStripMenuItem.Text = "解除";
             this.SelectionCancelToolStripMenuItem.Click += new System.EventHandler(this.SelectionCancelToolStripMenuItem_Click);
+            // 
+            // AlgorithmEraseAllToolStripMenuItem
+            // 
+            this.AlgorithmEraseAllToolStripMenuItem.Name = "AlgorithmEraseAllToolStripMenuItem";
+            this.AlgorithmEraseAllToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.AlgorithmEraseAllToolStripMenuItem.Text = "イレーズ・オール";
+            this.AlgorithmEraseAllToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmEraseAllToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -189,6 +207,8 @@
         private System.Windows.Forms.ToolStripMenuItem 選択範囲ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SelectionCancelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SelectionAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AlgorithmNoiseCancelerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AlgorithmEraseAllToolStripMenuItem;
     }
 }
 

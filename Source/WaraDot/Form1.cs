@@ -181,77 +181,17 @@ namespace WaraDot
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            // バケツ
-            if (null!= Program.buckets)
+            // 現在使用中のアルゴリズム
+            if (null != Program.currentAlgorithm)
             {
-                if (Program.buckets.IsFinished())
+                if (Program.currentAlgorithm.IsFinished())
                 {
-                    Program.buckets = null;
+                    Program.currentAlgorithm = null;
                     OperatorType = OperatorType.Human;
                 }
                 else
                 {
-                    Program.buckets.Step();
-                    RefreshCanvas();
-                }
-            }
-
-            // ワンドット・イーター
-            if (null != Program.oneDotEater)
-            {
-                if (Program.oneDotEater.IsFinished())
-                {
-                    Program.oneDotEater = null;
-                    OperatorType = OperatorType.Human;
-                }
-                else
-                {
-                    Program.oneDotEater.Step();
-                    RefreshCanvas();
-                }
-            }
-
-            // ドット・ブラッカイズ
-            if (null != Program.dotBlackize)
-            {
-                if (Program.dotBlackize.IsFinished())
-                {
-                    Program.dotBlackize = null;
-                    OperatorType = OperatorType.Human;
-                }
-                else
-                {
-                    Program.dotBlackize.Step();
-                    RefreshCanvas();
-                }
-            }
-
-            // ドット・アベレージ
-            if (null != Program.dotAverage)
-            {
-                if (Program.dotAverage.IsFinished())
-                {
-                    Program.dotAverage = null;
-                    OperatorType = OperatorType.Human;
-                }
-                else
-                {
-                    Program.dotAverage.Step();
-                    RefreshCanvas();
-                }
-            }
-
-            // ドット・トランスペアレント・クリアー
-            if (null != Program.dotTransparentClear)
-            {
-                if (Program.dotTransparentClear.IsFinished())
-                {
-                    Program.dotTransparentClear = null;
-                    OperatorType = OperatorType.Human;
-                }
-                else
-                {
-                    Program.dotTransparentClear.Step();
+                    Program.currentAlgorithm.Step();
                     RefreshCanvas();
                 }
             }
@@ -266,14 +206,16 @@ namespace WaraDot
 
         /// <summary>
         /// [アルゴリズム] - [1ドットイーター]
+        /// 1ドットの点を消したい
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Algorithm1DotEaterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DoSelectionAll();
-            // 1ドットの点を消したい
-            Program.oneDotEater = OneDotEater.Build(this);
+            OneDotEater instance = OneDotEater.Instance(this);
+            Program.currentAlgorithm = instance;
+            instance.Clear();
+            instance.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -284,8 +226,10 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmBlackizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DoSelectionAll();
-            Program.dotBlackize = DotBlackize.Build(this);
+            DotBlackize instance = DotBlackize.Instance(this);
+            Program.currentAlgorithm = instance;
+            instance.Clear();
+            instance.Init();
             OperatorType = OperatorType.Computer;
         }
 
@@ -296,8 +240,10 @@ namespace WaraDot
         /// <param name="e"></param>
         private void AlgorithmDotAverageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DoSelectionAll();
-            Program.dotAverage = DotAverage.Build(this);
+            DotAverage instance = DotAverage.Instance(this);
+            instance.Clear();
+            instance.Init();
+            Program.currentAlgorithm = instance;
             OperatorType = OperatorType.Computer;
         }
 
@@ -308,13 +254,11 @@ namespace WaraDot
         /// <param name="e"></param>
         private void DotTransparentClearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DoSelectionAll();
-            Program.dotTransparentClear = DotTransparentClear.Build(this);
+            DotTransparentClear instance = DotTransparentClear.Instance(this);
+            Program.currentAlgorithm = instance;
+            instance.Clear();
+            instance.Init();
             OperatorType = OperatorType.Computer;
-        }
-
-        private void SelectionStartToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
 
         /// <summary>
@@ -345,6 +289,34 @@ namespace WaraDot
         private void SelectionAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DoSelectionAll();
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [ノイズキャンセラー]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgorithmNoiseCancelerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NoiseCanceler instance = NoiseCanceler.Instance(this);
+            Program.currentAlgorithm = instance;
+            instance.Clear();
+            instance.Init();
+            OperatorType = OperatorType.Computer;
+        }
+
+        /// <summary>
+        /// [アルゴリズム] - [イレーズ・オール]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgorithmEraseAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EraseAll instance = EraseAll.Instance(this);
+            Program.currentAlgorithm = instance;
+            instance.Clear();
+            instance.Init();
+            OperatorType = OperatorType.Computer;
         }
     }
 }

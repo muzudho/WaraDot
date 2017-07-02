@@ -74,11 +74,11 @@ namespace WaraDot
         Rectangle selectionWnd = Rectangle.Empty;
         public void SyncSelection()
         {
-            if(Rectangle.Empty != Common.selectionImg)
+            if(Rectangle.Empty != Program.selectionImg)
             {
-                Trace.WriteLine("selectionImg ("+ Common.selectionImg.X + ", "+ Common.selectionImg.Y + ", "+ Common.selectionImg.Width + ", "+ Common.selectionImg.Height + ")");
-                Point windowPt = ToWindow(Common.selectionImg.X, Common.selectionImg.Y);
-                Point windowEnd = ToWindow(Common.selectionImg.X+ Common.selectionImg.Width, Common.selectionImg.Y+ Common.selectionImg.Height);
+                Trace.WriteLine("selectionImg ("+ Program.selectionImg.X + ", "+ Program.selectionImg.Y + ", "+ Program.selectionImg.Width + ", "+ Program.selectionImg.Height + ")");
+                Point windowPt = ToWindow(Program.selectionImg.X, Program.selectionImg.Y);
+                Point windowEnd = ToWindow(Program.selectionImg.X+ Program.selectionImg.Width, Program.selectionImg.Y+ Program.selectionImg.Height);
                 Trace.WriteLine("selectionWnd Pt(" + windowPt.X + ", " + windowPt.Y + ") end(" + windowEnd.X + ", " + windowEnd.Y + ")");
 
                 selectionWnd.X = windowPt.X;
@@ -100,7 +100,7 @@ namespace WaraDot
         /// </summary>
         public void ClearSelection()
         {
-            Common.selectionImg = Rectangle.Empty;
+            Program.selectionImg = Rectangle.Empty;
             SyncSelection();
         }
         /// <summary>
@@ -108,10 +108,10 @@ namespace WaraDot
         /// </summary>
         public void DoSelectionAll()
         {
-            Common.selectionImg.X = 0;
-            Common.selectionImg.Y = 0;
-            Common.selectionImg.Width = Program.config.GetDrawingLayerBitmap().Width;
-            Common.selectionImg.Height = Program.config.GetDrawingLayerBitmap().Height;
+            Program.selectionImg.X = 0;
+            Program.selectionImg.Y = 0;
+            Program.selectionImg.Width = Program.config.GetDrawingLayerBitmap().Width;
+            Program.selectionImg.Height = Program.config.GetDrawingLayerBitmap().Height;
             SyncSelection();
         }
 
@@ -409,7 +409,7 @@ namespace WaraDot
                                 {
                                     Point endPtImg = ToImage(e.X, e.Y);
                                     //selectionImg.Size = new Size(Math.Abs(endPtImg.X-selectionImg.X), Math.Abs(endPtImg.Y - selectionImg.Y));
-                                    Common.selectionImg.Size = new Size(endPtImg.X - Common.selectionImg.X, endPtImg.Y - Common.selectionImg.Y);
+                                    Program.selectionImg.Size = new Size(endPtImg.X - Program.selectionImg.X, endPtImg.Y - Program.selectionImg.Y);
                                     SyncSelection();
                                     refresh = true;
                                 }
@@ -471,7 +471,7 @@ namespace WaraDot
                 // 指しているピクセルを枠で囲む。等倍のとき邪魔だが……☆（＾～＾）
                 g.DrawRectangle(cursorPen, cursorRect);
 
-                if (Rectangle.Empty != Common.selectionImg)
+                if (Rectangle.Empty != Program.selectionImg)
                 {
                     // 選択範囲を描画する
                     g.DrawRectangle(Pens.Blue, selectionWnd);
@@ -492,14 +492,17 @@ namespace WaraDot
                         case Tools.Buckets:
                             {
                                 // 塗りつぶしたい
-                                Program.buckets = Buckets.Build(e.X, e.Y, form1);
+                                Buckets buckets = Buckets.Instance(form1);
+                                Program.currentAlgorithm = buckets;
+                                buckets.Clear();
+                                buckets.Init(e.X, e.Y);
                                 form1.OperatorType = OperatorType.Computer;
                             }
                             break;
                         case Tools.Selection:
                             {
                                 Point pt = ToImage(e.X, e.Y);
-                                Common.selectionImg = new Rectangle(pt.X, pt.Y, 1, 1);
+                                Program.selectionImg = new Rectangle(pt.X, pt.Y, 1, 1);
                                 SyncSelection();
                                 RefreshCanvas();
                             }

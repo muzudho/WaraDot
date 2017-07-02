@@ -10,8 +10,13 @@ namespace WaraDot.Algorithm
     /// 塗りつぶしアルゴリズムを視覚化できないだろうか？
     /// 
     /// </summary>
-    public class Buckets
+    public class Buckets : IAlgorithm
     {
+        /// <summary>
+        /// アルゴリズム名
+        /// </summary>
+        public string Name { get { return "Buckets"; } }
+
         Form1 form1_cache;
         Color color_cache;
 
@@ -35,30 +40,39 @@ namespace WaraDot.Algorithm
         /// </summary>
         const int COUNT_MAX_LIMIT = 10000;
 
-        public static Buckets Build(int mouseX, int mouseY, Form1 form1)
+        static Buckets instance;
+        public static Buckets Instance(Form1 form1)
         {
-            Buckets obj = new Buckets( mouseX, mouseY, form1);
-            return obj;
+            if (null== instance)
+            {
+                instance = new Buckets(form1);
+            }
+            return instance;
         }
-
-        Buckets(int mouseX, int mouseY, Form1 form1)
+        Buckets(Form1 form1)
         {
             form1_cache = form1;
-
             markboard = new Markboard();
+            currentPoints = new List<Point>();
+            nextPoints = new List<Point>();
+        }
+        public void Clear()
+        {
+            nextPoints.Clear();
+            markboard.Clear();
+        }
+        public void Init(int mouseX, int mouseY)
+        {
             markboard.Init();
 
             // スタート地点
-            Point imgPt = form1.ToImage(mouseX, mouseY);
+            Point imgPt = form1_cache.ToImage(mouseX, mouseY);
+            nextPoints.Add(imgPt);
+
             // マウス押下した地点の色
             color_cache = Program.config.GetDrawingLayerBitmap().GetPixel(imgPt.X, imgPt.Y);
-
-            currentPoints = new List<Point>();
-            nextPoints = new List<Point>
-            {
-                imgPt
-            };
         }
+
 
         public bool IsFinished()
         {

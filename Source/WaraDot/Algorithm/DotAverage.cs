@@ -11,8 +11,13 @@ namespace WaraDot.Algorithm
     /// 現在地と、４方向の色を見て、色を平均化します。
     /// 透明は無視します
     /// </summary>
-    public class DotAverage
+    public class DotAverage : IAlgorithm
     {
+        /// <summary>
+        /// アルゴリズム名
+        /// </summary>
+        public string Name { get { return "DotAverage"; } }
+
         Form1 form1_cache;
 
         /// <summary>
@@ -44,24 +49,31 @@ namespace WaraDot.Algorithm
         /// </summary>
         int done;
 
-        public static DotAverage Build(Form1 form1)
+        static DotAverage instance;
+        public static DotAverage Instance(Form1 form1)
         {
-            DotAverage obj = new DotAverage(form1);
-            return obj;
+            if(null== instance)
+            {
+                instance = new DotAverage(form1);
+            }
+            return instance;
         }
-
         DotAverage(Form1 form1)
         {
             form1_cache = form1;
-
             markboard = new Markboard();
-            markboard.Init();
-
-            beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
             done = 0;
-
+        }
+        public void Clear()
+        {
+            markboard.Clear();
+            beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
+        }
+        public void Init()
+        {
+            markboard.Init();
             // スタート地点
-            currentPoint = new Point(Common.selectionImg.X, Common.selectionImg.Y);
+            currentPoint = new Point(Program.selectionImg.X, Program.selectionImg.Y);
         }
 
         public bool IsFinished()
@@ -250,13 +262,13 @@ namespace WaraDot.Algorithm
 
             gt_Next:
             // 次の地点
-            if (currentPoint.X + 1 < Common.selectionImg.X+Common.selectionImg.Width)// Program.config.width
+            if (currentPoint.X + 1 < Program.selectionImg.X+ Program.selectionImg.Width)// Program.config.width
             {
                 currentPoint.X++;
             }
-            else if (currentPoint.Y + 1 < Common.selectionImg.Y+Common.selectionImg.Height)// Program.config.height
+            else if (currentPoint.Y + 1 < Program.selectionImg.Y+ Program.selectionImg.Height)// Program.config.height
             {
-                currentPoint.X = Common.selectionImg.X;// 0;
+                currentPoint.X = Program.selectionImg.X;// 0;
                 currentPoint.Y++;
             }
             else

@@ -1,19 +1,18 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace WaraDot.Algorithm
 {
     /// <summary>
-    /// ドット・トランスペアレント・クリアー
+    /// イレーズ・オール
     /// 
-    /// 半透明は、透明にしてしまいます
+    /// 透明で塗りつぶします
     /// </summary>
-    public class DotTransparentClear : IAlgorithm
+    public class EraseAll : IAlgorithm
     {
         /// <summary>
         /// アルゴリズム名
         /// </summary>
-        public string Name { get { return "DotTransparentClear"; } }
+        public string Name { get { return "EraseAll"; } }
 
         Form1 form1_cache;
 
@@ -46,17 +45,16 @@ namespace WaraDot.Algorithm
         /// </summary>
         int done;
 
-        static DotTransparentClear instance;
-        public static DotTransparentClear Instance(Form1 form1)
+        static EraseAll instance;
+        public static EraseAll Instance(Form1 form1)
         {
             if (null == instance)
             {
-                instance = new DotTransparentClear(form1);
+                instance = new EraseAll(form1);
             }
             return instance;
         }
-
-        DotTransparentClear(Form1 form1)
+        EraseAll(Form1 form1)
         {
             form1_cache = form1;
             markboard = new Markboard();
@@ -87,8 +85,6 @@ namespace WaraDot.Algorithm
                 return;
             }
 
-            Trace.WriteLine("cur(" + currentPoint.X + ", " + currentPoint.Y + ") img(" + Program.config.width + ", " + Program.config.height + ") done="+done);
-
             for (int i = 0; i < countMax; i++)
             {
                 if (!IsFinished())
@@ -115,14 +111,14 @@ namespace WaraDot.Algorithm
         /// <param name="imgY"></param>
         void DrawAndSearch()
         {
-            // 指定した地点の色
-            Color color2 = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
-
-            if (color2.A<255)
+            if (markboard.Editable(currentPoint.X, currentPoint.Y))
             {
-                if (markboard.Editable(currentPoint.X, currentPoint.Y))
+                // 指定した地点の色
+                Color color2 = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+
+                if (Color.Transparent != color2)
                 {
-                    // 半透明セルは透明化
+                    // 透明化
                     form1_cache.Color = Color.Transparent;
                     bool drawed = false;
                     form1_cache.DrawDotByImage(currentPoint.X, currentPoint.Y, ref drawed);

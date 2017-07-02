@@ -73,6 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\Buckets.cs" />
+    <Compile Include="Algorithm\EraseAll.cs" />
+    <Compile Include="Algorithm\IAlgorithm.cs" />
+    <Compile Include="Algorithm\NoiseCanceler.cs" />
     <Compile Include="Algorithm\Markboard.cs" />
     <Compile Include="CenterUserControl.cs">
       <SubType>UserControl</SubType>
@@ -80,7 +83,6 @@
     <Compile Include="CenterUserControl.Designer.cs">
       <DependentUpon>CenterUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Common.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Algorithm\DotTransparentClear.cs" />
     <Compile Include="Algorithm\DotAverage.cs" />

@@ -16,16 +16,31 @@ namespace WaraDot.Algorithm
         /// </summary>
         bool[,] markboard;
 
-        public void Init()
+        public Markboard()
         {
             markboard = new bool[Program.config.width, Program.config.height];
-
+        }
+        public void Clear()
+        {
+            for (int y = 0; y < Program.config.height; y++)
+            {
+                for (int x = 0; x < Program.config.width; x++)
+                {
+                    if (!Program.selectionImg.Contains(x, y))
+                    {
+                        markboard[x, y] = false;
+                    }
+                }
+            }
+        }
+        public void Init()
+        {
             // 選択範囲の外は編集しないようにする
             for (int y = 0; y < Program.config.height; y++)
             {
                 for (int x = 0; x < Program.config.width; x++)
                 {
-                    if (!Common.selectionImg.Contains(x, y))
+                    if (!Program.selectionImg.Contains(x, y))
                     {
                         markboard[x, y] = true;
                     }
