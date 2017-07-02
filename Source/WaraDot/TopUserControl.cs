@@ -77,6 +77,10 @@ namespace WaraDot
         {
             return colorButton.BackColor;
         }
+        public void SyncDone(int done)
+        {
+            doneTextBox.Text = done.ToString();
+        }
         #endregion
 
         /// <summary>
@@ -84,10 +88,10 @@ namespace WaraDot
         /// </summary>
         public void Save()
         {
-            for (int iLayer = 1; iLayer < Program.config.layersBitmap.Length; iLayer++)
+            for (int iLayer = 1; iLayer < Program.config.layerOperation.layersBitmap.Length; iLayer++)
             {
                 // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
-                Program.config.layersBitmap[iLayer].Save(Config.GetImageFileName(iLayer));
+                Program.config.layerOperation.layersBitmap[iLayer].Save(LayerOperation.GetImageFileName(iLayer));
             }
 
             #region 保存フラグ
@@ -103,30 +107,6 @@ namespace WaraDot
         private void SaveButton_Click(object sender, EventArgs e)
         {
             Save();
-        }
-
-        /// <summary>
-        /// [ノイズ]ボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NoiseButton_Click(object sender, EventArgs e)
-        {
-            int r, g, b;
-
-            // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
-            for (int y = 0; y < Program.config.LookingLayerBitmap.Height; y++)
-            {
-                for (int x = 0; x < Program.config.LookingLayerBitmap.Width; x++)
-                {
-                    r = Form1.rand.Next(256);
-                    g = Form1.rand.Next(256);
-                    b = Form1.rand.Next(256);
-                    Program.config.DrawingLayerBitmap.SetPixel(x, y, Color.FromArgb(r,g,b));
-                }
-            }
-
-            ((Form1)ParentForm).RefreshCanvas();
         }
 
         private void ReloadConfigButton_Click(object sender, EventArgs e)
@@ -164,25 +144,6 @@ namespace WaraDot
         private void AlphaTextBox_TextChanged(object sender, EventArgs e)
         {
             OnColorTextChanged();
-        }
-
-        /// <summary>
-        /// [白紙]ボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
-            for (int y = 0; y < Program.config.LookingLayerBitmap.Height; y++)
-            {
-                for (int x = 0; x < Program.config.LookingLayerBitmap.Width; x++)
-                {
-                    Program.config.DrawingLayerBitmap.SetPixel(x, y, Color.White);
-                }
-            }
-
-            ((Form1)ParentForm).RefreshCanvas();
         }
 
         private void ColorButton_Click(object sender, EventArgs e)

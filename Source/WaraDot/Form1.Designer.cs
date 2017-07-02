@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.centerControl1 = new WaraDot.CenterUserControl();
             this.topPanel = new System.Windows.Forms.Panel();
-            this.topControl1 = new WaraDot.TopUserControl();
+            this.topUserControl1 = new WaraDot.TopUserControl();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.アルゴリズムToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,10 +40,13 @@
             this.ドットアベレージToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.半透明の透明化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AlgorithmNoiseCancelerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlgorithmEraseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.選択範囲ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionCancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AlgorithmEraseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.作り直し操作ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RemakeNoiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RemakeWhitePaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -60,31 +63,33 @@
             // topPanel
             // 
             this.topPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.topPanel.Controls.Add(this.topControl1);
+            this.topPanel.Controls.Add(this.topUserControl1);
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(0, 24);
             this.topPanel.Name = "topPanel";
             this.topPanel.Size = new System.Drawing.Size(591, 38);
             this.topPanel.TabIndex = 0;
             // 
-            // topControl1
+            // topUserControl1
             // 
-            this.topControl1.BackColor = System.Drawing.SystemColors.Control;
-            this.topControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topControl1.Location = new System.Drawing.Point(0, 0);
-            this.topControl1.Name = "topControl1";
-            this.topControl1.Size = new System.Drawing.Size(591, 38);
-            this.topControl1.TabIndex = 0;
+            this.topUserControl1.BackColor = System.Drawing.SystemColors.Control;
+            this.topUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topUserControl1.Location = new System.Drawing.Point(0, 0);
+            this.topUserControl1.Name = "topUserControl1";
+            this.topUserControl1.Size = new System.Drawing.Size(591, 38);
+            this.topUserControl1.TabIndex = 0;
             // 
             // timer1
             // 
+            this.timer1.Interval = 16;
             this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.アルゴリズムToolStripMenuItem,
-            this.選択範囲ToolStripMenuItem});
+            this.選択範囲ToolStripMenuItem,
+            this.作り直し操作ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(591, 24);
@@ -139,6 +144,13 @@
             this.AlgorithmNoiseCancelerToolStripMenuItem.Text = "ノイズキャンセラー";
             this.AlgorithmNoiseCancelerToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmNoiseCancelerToolStripMenuItem_Click);
             // 
+            // AlgorithmEraseAllToolStripMenuItem
+            // 
+            this.AlgorithmEraseAllToolStripMenuItem.Name = "AlgorithmEraseAllToolStripMenuItem";
+            this.AlgorithmEraseAllToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.AlgorithmEraseAllToolStripMenuItem.Text = "イレーズ・オール";
+            this.AlgorithmEraseAllToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmEraseAllToolStripMenuItem_Click);
+            // 
             // 選択範囲ToolStripMenuItem
             // 
             this.選択範囲ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -162,12 +174,28 @@
             this.SelectionCancelToolStripMenuItem.Text = "解除";
             this.SelectionCancelToolStripMenuItem.Click += new System.EventHandler(this.SelectionCancelToolStripMenuItem_Click);
             // 
-            // AlgorithmEraseAllToolStripMenuItem
+            // 作り直し操作ToolStripMenuItem
             // 
-            this.AlgorithmEraseAllToolStripMenuItem.Name = "AlgorithmEraseAllToolStripMenuItem";
-            this.AlgorithmEraseAllToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
-            this.AlgorithmEraseAllToolStripMenuItem.Text = "イレーズ・オール";
-            this.AlgorithmEraseAllToolStripMenuItem.Click += new System.EventHandler(this.AlgorithmEraseAllToolStripMenuItem_Click);
+            this.作り直し操作ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RemakeNoiseToolStripMenuItem,
+            this.RemakeWhitePaperToolStripMenuItem});
+            this.作り直し操作ToolStripMenuItem.Name = "作り直し操作ToolStripMenuItem";
+            this.作り直し操作ToolStripMenuItem.Size = new System.Drawing.Size(83, 20);
+            this.作り直し操作ToolStripMenuItem.Text = "作り直し操作";
+            // 
+            // RemakeNoiseToolStripMenuItem
+            // 
+            this.RemakeNoiseToolStripMenuItem.Name = "RemakeNoiseToolStripMenuItem";
+            this.RemakeNoiseToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.RemakeNoiseToolStripMenuItem.Text = "ノイズ";
+            this.RemakeNoiseToolStripMenuItem.Click += new System.EventHandler(this.RemakeNoiseToolStripMenuItem_Click);
+            // 
+            // RemakeWhitePaperToolStripMenuItem
+            // 
+            this.RemakeWhitePaperToolStripMenuItem.Name = "RemakeWhitePaperToolStripMenuItem";
+            this.RemakeWhitePaperToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.RemakeWhitePaperToolStripMenuItem.Text = "白紙";
+            this.RemakeWhitePaperToolStripMenuItem.Click += new System.EventHandler(this.RemakeWhitePaperToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -195,7 +223,7 @@
 
         #endregion
         private System.Windows.Forms.Panel topPanel;
-        private TopUserControl topControl1;
+        private TopUserControl topUserControl1;
         private CenterUserControl centerControl1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -209,6 +237,9 @@
         private System.Windows.Forms.ToolStripMenuItem SelectionAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AlgorithmNoiseCancelerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AlgorithmEraseAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 作り直し操作ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RemakeNoiseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RemakeWhitePaperToolStripMenuItem;
     }
 }
 

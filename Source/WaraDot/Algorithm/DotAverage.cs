@@ -40,11 +40,6 @@ namespace WaraDot.Algorithm
         TimeManager timeManager;
 
         /// <summary>
-        /// 加工前のビットマップ
-        /// </summary>
-        Bitmap beforeDrawingBitmap;
-
-        /// <summary>
         /// 加工した数
         /// </summary>
         int done;
@@ -69,8 +64,12 @@ namespace WaraDot.Algorithm
         {
             timeManager.Clear();
             markboard.Clear();
-            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
+
+            // 加工前のビットマップを置いておき、これを元データとして見にいく
+            Program.config.layerOperation.MemoryLayer();
+
             done = 0;
+            form1_cache.SyncDone(done);
         }
         public void Init()
         {
@@ -114,7 +113,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+            Color color2 = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
 
             if (255!=color2.A)
             {
@@ -127,7 +126,7 @@ namespace WaraDot.Algorithm
             {
                 if (textLikeCursorIteration.GoToNorth())
                 {
-                    north = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+                    north = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
                 }
                 textLikeCursorIteration.BackFromNorth();
             }
@@ -135,7 +134,7 @@ namespace WaraDot.Algorithm
             {
                 if (textLikeCursorIteration.GoToEast())
                 {
-                    east = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+                    east = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
                 }
                 textLikeCursorIteration.BackFromEast();
             }
@@ -143,7 +142,7 @@ namespace WaraDot.Algorithm
             {
                 if (textLikeCursorIteration.GoToSouth())
                 {
-                    south = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+                    south = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
                 }
                 textLikeCursorIteration.BackFromSouth();
             }
@@ -151,7 +150,7 @@ namespace WaraDot.Algorithm
             {
                 if (textLikeCursorIteration.GoToWest())
                 {
-                    west = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+                    west = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
                 }
                 textLikeCursorIteration.BackFromWest();
             }
@@ -188,7 +187,7 @@ namespace WaraDot.Algorithm
                     form1_cache.DrawingColor = Color.FromArgb(next, next, next);
                     bool drawed = false;
                     form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
-                    if (drawed) { done++; };
+                    if (drawed) { done++; form1_cache.SyncDone(done); };
                 }
             }
 
@@ -203,7 +202,7 @@ namespace WaraDot.Algorithm
                         form1_cache.DrawingColor = Color.FromArgb(next, next, next);
                         bool drawed = false;
                         form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
-                        if (drawed) { done++; };
+                        if (drawed) { done++; form1_cache.SyncDone(done); };
                     }
                 }
                 textLikeCursorIteration.BackFromNorth();
@@ -220,7 +219,7 @@ namespace WaraDot.Algorithm
                         form1_cache.DrawingColor = Color.FromArgb(next, next, next);
                         bool drawed = false;
                         form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
-                        if (drawed) { done++; };
+                        if (drawed) { done++; form1_cache.SyncDone(done); };
                     }
                 }
                 textLikeCursorIteration.BackFromEast();
@@ -237,7 +236,7 @@ namespace WaraDot.Algorithm
                         form1_cache.DrawingColor = Color.FromArgb(next, next, next);
                         bool drawed = false;
                         form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
-                        if (drawed) { done++; };
+                        if (drawed) { done++; form1_cache.SyncDone(done); };
                     }
                 }
                 textLikeCursorIteration.BackFromSouth();
@@ -254,7 +253,7 @@ namespace WaraDot.Algorithm
                         form1_cache.DrawingColor = Color.FromArgb(next, next, next);
                         bool drawed = false;
                         form1_cache.DrawDotByImage(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y, ref drawed);
-                        if (drawed) { done++; };
+                        if (drawed) { done++; form1_cache.SyncDone(done); };
                     }
                 }
                 textLikeCursorIteration.BackFromWest();

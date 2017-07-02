@@ -36,8 +36,8 @@
             this.alphaTextBox = new System.Windows.Forms.TextBox();
             this.operatorTypeLabel = new System.Windows.Forms.Label();
             this.reloadConfigButton = new System.Windows.Forms.Button();
-            this.noiseButton = new System.Windows.Forms.Button();
-            this.clearButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.doneTextBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,8 +60,8 @@
             this.flowLayoutPanel1.Controls.Add(this.alphaTextBox);
             this.flowLayoutPanel1.Controls.Add(this.operatorTypeLabel);
             this.flowLayoutPanel1.Controls.Add(this.reloadConfigButton);
-            this.flowLayoutPanel1.Controls.Add(this.noiseButton);
-            this.flowLayoutPanel1.Controls.Add(this.clearButton);
+            this.flowLayoutPanel1.Controls.Add(this.label1);
+            this.flowLayoutPanel1.Controls.Add(this.doneTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -127,25 +127,22 @@
             this.reloadConfigButton.UseVisualStyleBackColor = true;
             this.reloadConfigButton.Click += new System.EventHandler(this.ReloadConfigButton_Click);
             // 
-            // noiseButton
+            // label1
             // 
-            this.noiseButton.Location = new System.Drawing.Point(460, 3);
-            this.noiseButton.Name = "noiseButton";
-            this.noiseButton.Size = new System.Drawing.Size(75, 23);
-            this.noiseButton.TabIndex = 1;
-            this.noiseButton.Text = "ノイズ";
-            this.noiseButton.UseVisualStyleBackColor = true;
-            this.noiseButton.Click += new System.EventHandler(this.NoiseButton_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(460, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "done";
             // 
-            // clearButton
+            // doneTextBox
             // 
-            this.clearButton.Location = new System.Drawing.Point(3, 32);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(44, 23);
-            this.clearButton.TabIndex = 5;
-            this.clearButton.Text = "白紙";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
+            this.doneTextBox.Location = new System.Drawing.Point(495, 3);
+            this.doneTextBox.Name = "doneTextBox";
+            this.doneTextBox.ReadOnly = true;
+            this.doneTextBox.Size = new System.Drawing.Size(57, 19);
+            this.doneTextBox.TabIndex = 10;
             // 
             // TopUserControl
             // 
@@ -164,13 +161,13 @@
 
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button noiseButton;
         private System.Windows.Forms.Button reloadConfigButton;
         private System.Windows.Forms.Button colorButton;
         private System.Windows.Forms.TextBox colorTextBox;
-        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.ComboBox toolComboBox;
         private System.Windows.Forms.Label operatorTypeLabel;
         private System.Windows.Forms.TextBox alphaTextBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox doneTextBox;
     }
 }

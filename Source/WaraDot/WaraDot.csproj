@@ -75,6 +75,7 @@
     <Compile Include="Algorithm\Buckets.cs" />
     <Compile Include="Algorithm\EraseAll.cs" />
     <Compile Include="Algorithm\Sub\BucketsLikeCursorIteration.cs" />
+    <Compile Include="Algorithm\Sub\ColorUtility.cs" />
     <Compile Include="Algorithm\Sub\IAlgorithm.cs" />
     <Compile Include="Algorithm\NoiseCanceler.cs" />
     <Compile Include="Algorithm\Sub\Markboard.cs" />
@@ -98,6 +99,7 @@
     </Compile>
     <Compile Include="Algorithm\DotBlackize.cs" />
     <Compile Include="Algorithm\OneDotEater.cs" />
+    <Compile Include="LayerOperation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopUserControl.cs">

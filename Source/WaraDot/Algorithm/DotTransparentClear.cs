@@ -37,11 +37,6 @@ namespace WaraDot.Algorithm
         TimeManager timeManager;
 
         /// <summary>
-        /// 加工前のビットマップ
-        /// </summary>
-        Bitmap beforeDrawingBitmap;
-
-        /// <summary>
         /// 加工した数
         /// </summary>
         int done;
@@ -67,8 +62,12 @@ namespace WaraDot.Algorithm
         {
             timeManager.Clear();
             markboard.Clear();
-            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
+
+            // 加工前のビットマップを置いておき、これを元データとして見にいく
+            Program.config.layerOperation.MemoryLayer();
+
             done = 0;
+            form1_cache.SyncDone(done);
         }
         public void Init()
         {
@@ -112,7 +111,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = beforeDrawingBitmap.GetPixel(textLikeCursorIteration.cursor.X, textLikeCursorIteration.cursor.Y);
+            Color color2 = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textLikeCursorIteration.cursor);
 
             if (color2.A<255)
             {

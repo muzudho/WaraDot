@@ -62,6 +62,8 @@ namespace WaraDot.Algorithm
             timeManager.Clear();
             bucketsLikeCursorIteration.Clear();
             markboard.Clear();
+            done = 0;
+            form1_cache.SyncDone(done);
         }
         public void Init()
         {
@@ -70,7 +72,7 @@ namespace WaraDot.Algorithm
             bucketsLikeCursorIteration.Init(form1_cache.ToImage(form1_cache.CursorRect.X, form1_cache.CursorRect.Y));
 
             // マウス押下した地点の色
-            color_cache = Program.config.LookingLayerBitmap.GetPixel(bucketsLikeCursorIteration.nextPoints[0].X, bucketsLikeCursorIteration.nextPoints[0].Y);
+            color_cache = Program.config.layerOperation.GetLookingLayerPixel(bucketsLikeCursorIteration.nextPoints[0]);
         }
 
 
@@ -114,7 +116,7 @@ namespace WaraDot.Algorithm
             markboard.Mark(bucketsLikeCursorIteration.Cursor);
 
             // 指定した地点の色
-            Color color2 = Program.config.GetLookingLayerPixel(bucketsLikeCursorIteration.Cursor);
+            Color color2 = Program.config.layerOperation.GetLookingLayerPixel(bucketsLikeCursorIteration.Cursor);
 
             if (color2.Equals( color_cache))//一致した場合
             {
@@ -124,6 +126,7 @@ namespace WaraDot.Algorithm
                 if (drawed)
                 {
                     done++;
+                    form1_cache.SyncDone(done);
 
                     // 上
                     if (bucketsLikeCursorIteration.GoToNorth() && markboard.Editable(bucketsLikeCursorIteration.Cursor))

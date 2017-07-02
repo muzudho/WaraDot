@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
-using System;
+using System.Drawing;
 using WaraDot.Algorithm.Sub;
 
 namespace WaraDot.Algorithm
@@ -44,11 +43,6 @@ namespace WaraDot.Algorithm
         TimeManager timeManager;
 
         /// <summary>
-        /// 加工前のビットマップ
-        /// </summary>
-        Bitmap beforeDrawingBitmap;
-
-        /// <summary>
         /// 加工した数
         /// </summary>
         int done;
@@ -76,8 +70,12 @@ namespace WaraDot.Algorithm
         }
         public void Clear()
         {
-            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
+            // 加工前のビットマップを置いておき、これを元データとして見にいく
+            Program.config.layerOperation.MemoryLayer();
+
             done = 0;
+            form1_cache.SyncDone(done);
+
             timeManager.Clear();
             markboard.Clear();
             bucketslike.Clear();
@@ -92,7 +90,7 @@ namespace WaraDot.Algorithm
             form1_cache.SyncPos(textlike.cursor);
             // バケツ読みの開始位置
             bucketslike.Init(textlike.cursor);
-            startColor = Program.config.GetLookingLayerPixel(textlike.cursor);
+            startColor = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textlike.cursor);
         }
 
         public bool IsFinished()
@@ -143,10 +141,10 @@ namespace WaraDot.Algorithm
                     // ノイズは透明化
                     foreach (Point pt in selection)
                     {
-                        form1_cache.DrawingColor = form1_cache.DrawingColor;// Color.Transparent;
+                        form1_cache.DrawingColor = Color.Transparent;
                         bool drawed = false;
                         form1_cache.DrawDotByImage(pt, ref drawed);
-                        if (drawed) { done++; };
+                        if (drawed) { done++; form1_cache.SyncDone(done); };
                     }
                 }
                 else
@@ -161,6 +159,8 @@ namespace WaraDot.Algorithm
             gt_nextText:
             if (nextText)
             {
+                selection.Clear();
+
                 // カーソルを進める
                 textlike.GoToNext();
                 form1_cache.SyncPos(textlike.cursor);
@@ -168,8 +168,7 @@ namespace WaraDot.Algorithm
                 // 境界判定
                 if (!IsFinished())
                 {
-                    selection.Clear();
-                    startColor = Program.config.GetLookingLayerPixel(textlike.cursor);
+                    startColor = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(textlike.cursor);
 
                     // バケツの開始位置を変更
                     bucketslike.Init(textlike.cursor);
@@ -191,17 +190,17 @@ namespace WaraDot.Algorithm
         /// <param name="imgY"></param>
         void DrawAndSearch()
         {
-            // 指定した地点の色
-            Color color2 = Program.config.GetLookingLayerPixel(bucketslike.Cursor);
 
-            if (startColor == color2)
+            // 指定した地点の色
+            Color color2 = Program.config.layerOperation.GetBackgroundWorkingLayerPixel(bucketslike.Cursor);
+
+            if (ColorUtility.IsSimilarColor( startColor, color2 ))
             {
-                // 指定の升
-                {
-                    // 指定の升はとりあえずマークする
-                    markboard.Mark(bucketslike.Cursor);
-                    selection.Add(bucketslike.Cursor);
-                }
+                // 指定の色と似ている色の升
+                // 選択対象
+                selection.Add(bucketslike.Cursor);
+                // とりあえずマークする
+                markboard.Mark(bucketslike.Cursor);
 
                 // 上
                 if (bucketslike.GoToNorth() && markboard.Editable(bucketslike.Cursor))

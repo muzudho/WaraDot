@@ -34,8 +34,8 @@ namespace WaraDot
             {
                 operatorType = value;
 
-                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
-                topControl1.SyncOperatorType(value);
+                TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topUserControl1"];
+                topUserControl1.SyncOperatorType(value);
             }
         }
         OperatorType operatorType;
@@ -55,8 +55,8 @@ namespace WaraDot
             {
                 editing = value;
 
-                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
-                topControl1.SyncEditing(editing);
+                TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topUserControl1"];
+                topUserControl1.SyncEditing(editing);
             }
         }
         bool editing;
@@ -73,8 +73,8 @@ namespace WaraDot
             set
             {
                 drawingColor = value;
-                TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
-                topControl1.SyncColor(value);
+                TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topUserControl1"];
+                topUserControl1.SyncColor(value);
             }
         }
         public void RandomColor()
@@ -85,8 +85,8 @@ namespace WaraDot
 
         public Tools GetTool()
         {
-            TopUserControl topControl1 = (TopUserControl)topPanel.Controls["topControl1"];
-            return topControl1.tools;
+            TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topUserControl1"];
+            return topUserControl1.tools;
         }
         #endregion
 
@@ -106,7 +106,7 @@ namespace WaraDot
         public void ReloadConfig()
         {
             Program.config = Config.ReloadLua(this);
-            Program.config.ReloadLayerImages();
+            Program.config.layerOperation.ReloadLayerImages();
             centerControl1.OnReloadConfig();
         }
 
@@ -116,13 +116,13 @@ namespace WaraDot
             ReloadConfig();
 
             #region 画像の読み込み、または新規作成
-            Program.config.ReloadLayerImages();
+            Program.config.layerOperation.ReloadLayerImages();
             #endregion
 
             #region 保存フラグ
             // 初回のテキストボックスの内容変更は、未保存とは扱わない
             Editing = false;
-            topControl1.SyncEditing(Editing);
+            topUserControl1.SyncEditing(Editing);
             #endregion
 
             OperatorType = OperatorType.Human;
@@ -146,7 +146,7 @@ namespace WaraDot
             {
                 if ((e.KeyData & Keys.S) == Keys.S)
                 {
-                    TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topControl1"];
+                    TopUserControl topUserControl1 = (TopUserControl)topPanel.Controls["topUserControl1"];
                     topUserControl1.Save();
 
                     // ビープ音を鳴らないようにする
@@ -327,6 +327,54 @@ namespace WaraDot
             Program.currentAlgorithm = EraseAll.Instance(this);
             Program.currentAlgorithm.Init();
             OperatorType = OperatorType.Computer;
+        }
+
+        /// <summary>
+        /// [作り直し操作] - [ノイズ]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemakeNoiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int r, g, b;
+
+            // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
+            for (int y = 0; y < Program.config.layerOperation.DrawingLayerBitmap.Height; y++)
+            {
+                for (int x = 0; x < Program.config.layerOperation.DrawingLayerBitmap.Width; x++)
+                {
+                    r = Form1.rand.Next(256);
+                    g = Form1.rand.Next(256);
+                    b = Form1.rand.Next(256);
+                    Program.config.layerOperation.DrawPixel(x, y, Color.FromArgb(r, g, b));
+                }
+            }
+
+            RefreshCanvas();
+        }
+
+        /// <summary>
+        /// [作り直し操作] - [白紙]
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemakeWhitePaperToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
+            for (int y = 0; y < Program.config.layerOperation.DrawingLayerBitmap.Height; y++)
+            {
+                for (int x = 0; x < Program.config.layerOperation.DrawingLayerBitmap.Width; x++)
+                {
+                    Program.config.layerOperation.DrawPixel(x, y, Color.White);
+                }
+            }
+
+            RefreshCanvas();
+        }
+
+        public void SyncDone(int done)
+        {
+            topUserControl1.SyncDone(done);
         }
     }
 }
