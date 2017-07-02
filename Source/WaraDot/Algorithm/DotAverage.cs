@@ -10,6 +10,9 @@ namespace WaraDot.Algorithm
     /// 
     /// 現在地と、４方向の色を見て、色を平均化します。
     /// 透明は無視します
+    /// 
+    /// - 読み先、書き先が分かれている
+    /// - 読み先、書き先が同じでも使用可
     /// </summary>
     public class DotAverage : IAlgorithm
     {
@@ -42,7 +45,7 @@ namespace WaraDot.Algorithm
         /// <summary>
         /// 加工前のビットマップ
         /// </summary>
-        Bitmap beforeBitmap;
+        Bitmap beforeDrawingBitmap;
 
         /// <summary>
         /// 加工した数
@@ -67,7 +70,7 @@ namespace WaraDot.Algorithm
         public void Clear()
         {
             markboard.Clear();
-            beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
+            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
         }
         public void Init()
         {
@@ -118,7 +121,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
 
             if (255!=color2.A)
             {
@@ -132,7 +135,7 @@ namespace WaraDot.Algorithm
                 currentPoint.Y--;
                 if (-1 < currentPoint.Y)
                 {
-                    north = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    north = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y++;
             }
@@ -141,7 +144,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X++;
                 if (currentPoint.X < Program.config.width)
                 {
-                    east = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    east = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X--;
             }
@@ -150,7 +153,7 @@ namespace WaraDot.Algorithm
                 currentPoint.Y++;
                 if (currentPoint.Y < Program.config.height)
                 {
-                    south = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    south = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y--;
             }
@@ -159,7 +162,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X--;
                 if (-1 < currentPoint.X)
                 {
-                    west = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                    west = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X++;
             }

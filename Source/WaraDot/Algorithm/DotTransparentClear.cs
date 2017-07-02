@@ -7,6 +7,9 @@ namespace WaraDot.Algorithm
     /// ドット・トランスペアレント・クリアー
     /// 
     /// 半透明は、透明にしてしまいます
+    /// 
+    /// - 読み先、書き先が分かれている
+    /// - 読み先、書き先が同じでも使用可
     /// </summary>
     public class DotTransparentClear : IAlgorithm
     {
@@ -39,7 +42,7 @@ namespace WaraDot.Algorithm
         /// <summary>
         /// 加工前のビットマップ
         /// </summary>
-        Bitmap beforeBitmap;
+        Bitmap beforeDrawingBitmap;
 
         /// <summary>
         /// 加工した数
@@ -64,7 +67,7 @@ namespace WaraDot.Algorithm
         public void Clear()
         {
             markboard.Clear();
-            beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
+            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
             done = 0;
         }
         public void Init()
@@ -116,7 +119,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
 
             if (color2.A<255)
             {

@@ -9,6 +9,9 @@ namespace WaraDot.Algorithm
     /// ノイズキャンセラー
     /// 
     /// 12ドット以下の透明色以外の色のかたまりは、透明に置換します
+    /// 
+    /// - 読み先、書き先が分かれている
+    /// - 読み先、書き先が同じでも使用可
     /// </summary>
     public class NoiseCanceler : IAlgorithm
     {
@@ -44,7 +47,7 @@ namespace WaraDot.Algorithm
         /// <summary>
         /// 加工前のビットマップ
         /// </summary>
-        Bitmap beforeBitmap;
+        Bitmap beforeDrawingBitmap;
 
         /// <summary>
         /// 加工した数
@@ -70,7 +73,7 @@ namespace WaraDot.Algorithm
         }
         public void Clear()
         {
-            beforeBitmap = new Bitmap(Program.config.GetDrawingLayerBitmap());
+            beforeDrawingBitmap = new Bitmap(Program.config.DrawingLayerBitmap);
             done = 0;
             markboard.Clear();
         }
@@ -140,7 +143,7 @@ namespace WaraDot.Algorithm
             if (markboard.Editable(currentPoint.X, currentPoint.Y))
             {
                 // 指定した地点の色
-                Color color2 = beforeBitmap.GetPixel(currentPoint.X, currentPoint.Y);
+                Color color2 = beforeDrawingBitmap.GetPixel(currentPoint.X, currentPoint.Y);
 
                 if (255 == color2.A)
                 {
@@ -207,7 +210,7 @@ namespace WaraDot.Algorithm
             countPoints.Add(new Point(imgX, imgY));
 
             // 指定した地点の色
-            Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
+            Color color2 = Program.config.LookingLayerBitmap.GetPixel(imgX, imgY);
 
             if (Color.Transparent != color2)//透明でない場合
             {

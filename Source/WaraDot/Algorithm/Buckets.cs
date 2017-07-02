@@ -7,8 +7,8 @@ namespace WaraDot.Algorithm
     /// 1万ピクセルなら一瞬で塗りつぶせるが、
     /// 150x150=22500 ピクセルになるとスタックオーバーフローしてしまう。
     /// 
-    /// 塗りつぶしアルゴリズムを視覚化できないだろうか？
-    /// 
+    /// - 読み先、書き先が分かれている
+    /// - 読み先、書き先が同じでも使用可
     /// </summary>
     public class Buckets : IAlgorithm
     {
@@ -28,7 +28,8 @@ namespace WaraDot.Algorithm
         List<Point> currentPoints;
         List<Point> nextPoints;
         /// <summary>
-        /// 見てると飽きてくるんで、だんだん増やしていく。
+        /// １回のステップで描く上限
+        /// 長々と見てると飽きてくるんで、だんだん増やしてスピードアップさせる
         /// </summary>
         int countMax = 100;
         /// <summary>
@@ -70,7 +71,7 @@ namespace WaraDot.Algorithm
             nextPoints.Add(imgPt);
 
             // マウス押下した地点の色
-            color_cache = Program.config.GetDrawingLayerBitmap().GetPixel(imgPt.X, imgPt.Y);
+            color_cache = Program.config.LookingLayerBitmap.GetPixel(imgPt.X, imgPt.Y);
         }
 
 
@@ -89,9 +90,22 @@ namespace WaraDot.Algorithm
             currentPoints.Clear();
             currentPoints.AddRange(nextPoints);
             nextPoints.Clear();
-            for (int i = 0; i< currentPoints.Count; i++)
+            int iPt = 0;
+            for (; iPt< currentPoints.Count; iPt++)
             {
-                DrawAndSearch(currentPoints[i].X, currentPoints[i].Y);
+                if(nextPoints.Count < countMax)
+                {
+                    DrawAndSearch(currentPoints[iPt].X, currentPoints[iPt].Y);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            // 残った分は次の機会に
+            for (; iPt < currentPoints.Count; iPt++)
+            {
+                nextPoints.Add(currentPoints[iPt]);
             }
 
             if (countMax < COUNT_MAX_LIMIT)
@@ -116,7 +130,7 @@ namespace WaraDot.Algorithm
             markboard.Mark(imgX, imgY);
 
             // 指定した地点の色
-            Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(imgX, imgY);
+            Color color2 = Program.config.LookingLayerBitmap.GetPixel(imgX, imgY);
 
             if (color2.Equals( color_cache))//一致した場合
             {
@@ -126,11 +140,10 @@ namespace WaraDot.Algorithm
 
                 if (drawed)
                 {
-                    //bool worked_unUse = false;
                     //*
                     // 上
                     imgY--;
-                    if (-1< imgY && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
+                    if (-1< imgY && markboard.Editable(imgX, imgY))
                     {
                         nextPoints.Add( new Point(imgX, imgY));
                     }
@@ -139,7 +152,7 @@ namespace WaraDot.Algorithm
                     //*
                     // 右
                     imgX++;
-                    if (imgX  < Program.config.width && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
+                    if (imgX  < Program.config.width && markboard.Editable(imgX, imgY))
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }
@@ -148,7 +161,7 @@ namespace WaraDot.Algorithm
                     //*
                     // 下
                     imgY++;
-                    if (imgY  < Program.config.height && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
+                    if (imgY  < Program.config.height && markboard.Editable(imgX, imgY))
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }
@@ -157,7 +170,7 @@ namespace WaraDot.Algorithm
                     //*
                     // 左
                     imgX--;
-                    if (-1 < imgX && markboard.Editable(imgX, imgY) && nextPoints.Count < countMax)
+                    if (-1 < imgX && markboard.Editable(imgX, imgY))
                     {
                         nextPoints.Add(new Point(imgX, imgY));
                     }

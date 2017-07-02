@@ -38,7 +38,12 @@ namespace WaraDot
         public double scale;
 
         /// <summary>
-        /// 描画対象レイヤー
+        /// アルゴリズムが見る元のレイヤー
+        /// </summary>
+        public int lookingLayer;
+
+        /// <summary>
+        /// ドローイング・ツール、または  アルゴリズムが描く先のレイヤー
         /// </summary>
         public int drawingLayer;
 
@@ -54,17 +59,16 @@ namespace WaraDot
         /// <summary>
         /// 出力画像ファイル名
         /// </summary>
-        public static string GetImageFile(int layer)
+        public static string GetImageFileName(int iLayer)
         {
-            return string.Format("Work/WaraLayer{0}.png", layer);
+            return string.Format("Work/WaraLayer{0}.png", iLayer);
         }
 
         public string Dump()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("DRAWING_LAYER = ");sb.Append(drawingLayer);sb.AppendLine();
-            sb.Append("読込む画像ファイル = "); sb.Append(GetImageFile(drawingLayer)); sb.AppendLine();
-
+            sb.Append("LOOKING_LAYER = ["); sb.Append(lookingLayer); sb.Append("] "); sb.Append(GetImageFileName(lookingLayer)); sb.AppendLine();
+            sb.Append("DRAWING_LAYER = [");sb.Append(drawingLayer); sb.Append("] "); sb.Append(GetImageFileName(drawingLayer)); sb.AppendLine();
 
             sb.Append("LAYERS_VISIBLE.Length = "); sb.Append(layersVisible.Length); sb.AppendLine();
 
@@ -122,7 +126,13 @@ namespace WaraDot
             if (!(value is double)) { value = 1d; }
             config.scale = (double)value;
 
-            // 描画対象レイヤー
+            // アルゴリズムが見る元のレイヤー
+            value = Program.lua["LOOKING_LAYER"];
+            Trace.WriteLine("LOOKING_LAYER Type = " + value.GetType().Name);
+            if (!(value is double)) { value = 0d; }
+            config.lookingLayer = (int)((double)value);
+
+            // ドローイング・ツール、または  アルゴリズムが描く先のレイヤー
             value = Program.lua["DRAWING_LAYER"];
             Trace.WriteLine("DRAWING_LAYER Type = " + value.GetType().Name);
             if (!(value is double)) { value = 0d; }
@@ -153,10 +163,14 @@ namespace WaraDot
         /// 描画中のレイヤー画像
         /// </summary>
         public Bitmap[] layersBitmap;
-        public Bitmap GetDrawingLayerBitmap()
-        {
-            return layersBitmap[drawingLayer];
-        }
+        /// <summary>
+        /// アルゴリズムが見る元のレイヤー
+        /// </summary>
+        public Bitmap LookingLayerBitmap { get { return layersBitmap[lookingLayer]; } }
+        /// <summary>
+        /// ドローイング・ツール、または  アルゴリズムが描く先のレイヤー
+        /// </summary>
+        public Bitmap DrawingLayerBitmap { get { return layersBitmap[drawingLayer]; } }
 
         /// <summary>
         /// 指定したファイルをロックせずに、System.Drawing.Imageを作成する。
@@ -180,17 +194,18 @@ namespace WaraDot
         /// </summary>
         public void ReloadLayerImages()
         {
-            for (int i = 1; i < layersBitmap.Length; i++)
+            for (int iLayer = 1; iLayer < layersBitmap.Length; iLayer++)
             {
-                if (File.Exists(Config.GetImageFile(drawingLayer)))
+                // if (File.Exists(Config.GetImageFile(drawingLayer)))
+                if (File.Exists(Config.GetImageFileName(iLayer)))
                 {
                     //// 画像をそのまま読込むと、形式が分からないので、Bitmapインスタンスに移し替える。
                     //// 出典: 「簡単な画像処理と読み込み・保存（C#）」 http://qiita.com/Toshi332/items/2749690489730f32e63d
-                    layersBitmap[i] = new Bitmap(CreateImage(Config.GetImageFile(i)));
+                    layersBitmap[iLayer] = new Bitmap(CreateImage(Config.GetImageFileName(iLayer)));
                 }
                 else
                 {
-                    layersBitmap[i] = new Bitmap(width, height);
+                    layersBitmap[iLayer] = new Bitmap(width, height);
                 }
             }
         }

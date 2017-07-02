@@ -8,6 +8,9 @@ namespace WaraDot.Algorithm
     /// 1ドットイーター
     /// 
     /// 1ドット浮いていれば、周りの色で置換します
+    /// 
+    /// - 読み先、書き先が分かれている
+    /// - 読み先、書き先が同じでも使用可
     /// </summary>
     public class OneDotEater : IAlgorithm
     {
@@ -109,7 +112,7 @@ namespace WaraDot.Algorithm
         void DrawAndSearch()
         {
             // 指定した地点の色
-            Color color2 = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+            Color color2 = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
 
             // 指定した地点の四方の色
             Color north = Color.Transparent;
@@ -117,7 +120,7 @@ namespace WaraDot.Algorithm
                 currentPoint.Y--;
                 if (-1 < currentPoint.Y)
                 {
-                    north = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    north = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y++;
             }
@@ -126,7 +129,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X++;
                 if (currentPoint.X < Program.config.width)
                 {
-                    east = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    east = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X--;
             }
@@ -135,7 +138,7 @@ namespace WaraDot.Algorithm
                 currentPoint.Y++;
                 if (currentPoint.Y < Program.config.height)
                 {
-                    south = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    south = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.Y--;
             }
@@ -144,7 +147,7 @@ namespace WaraDot.Algorithm
                 currentPoint.X--;
                 if (-1 < currentPoint.X)
                 {
-                    west = Program.config.GetDrawingLayerBitmap().GetPixel(currentPoint.X, currentPoint.Y);
+                    west = Program.config.LookingLayerBitmap.GetPixel(currentPoint.X, currentPoint.Y);
                 }
                 currentPoint.X++;
             }

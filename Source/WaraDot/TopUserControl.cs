@@ -84,9 +84,11 @@ namespace WaraDot
         /// </summary>
         public void Save()
         {
-            Form1 form1 = (Form1)ParentForm;
-            // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
-            Program.config.GetDrawingLayerBitmap().Save(Config.GetImageFile(Program.config.drawingLayer));
+            for (int iLayer = 1; iLayer < Program.config.layersBitmap.Length; iLayer++)
+            {
+                // 自分で画像ファイルを開いているので、ロックがかかっていて保存に失敗することがある。
+                Program.config.layersBitmap[iLayer].Save(Config.GetImageFileName(iLayer));
+            }
 
             #region 保存フラグ
             ((Form1)ParentForm).Editing = false;
@@ -110,18 +112,17 @@ namespace WaraDot
         /// <param name="e"></param>
         private void NoiseButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = Program.config.GetDrawingLayerBitmap();
             int r, g, b;
 
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
-            for (int y = 0; y < img.Height; y++)
+            for (int y = 0; y < Program.config.LookingLayerBitmap.Height; y++)
             {
-                for (int x = 0; x < img.Width; x++)
+                for (int x = 0; x < Program.config.LookingLayerBitmap.Width; x++)
                 {
                     r = Form1.rand.Next(256);
                     g = Form1.rand.Next(256);
                     b = Form1.rand.Next(256);
-                    img.SetPixel(x, y, Color.FromArgb(r,g,b));
+                    Program.config.DrawingLayerBitmap.SetPixel(x, y, Color.FromArgb(r,g,b));
                 }
             }
 
@@ -172,14 +173,12 @@ namespace WaraDot
         /// <param name="e"></param>
         private void ClearButton_Click(object sender, EventArgs e)
         {
-            Bitmap img = Program.config.GetDrawingLayerBitmap();
-
             // 全ピクセルにランダムに色を置いていくぜ☆（＾～＾）
-            for (int y = 0; y < img.Height; y++)
+            for (int y = 0; y < Program.config.LookingLayerBitmap.Height; y++)
             {
-                for (int x = 0; x < img.Width; x++)
+                for (int x = 0; x < Program.config.LookingLayerBitmap.Width; x++)
                 {
-                    img.SetPixel(x, y, Color.White);
+                    Program.config.DrawingLayerBitmap.SetPixel(x, y, Color.White);
                 }
             }
 
